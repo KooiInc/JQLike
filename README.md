@@ -1,2 +1,0 @@
-# JQLike
-Created with CodeSandbox

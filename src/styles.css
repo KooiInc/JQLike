@@ -1,0 +1,16 @@
+body {
+  font: normal 12px/15px verdana, arial;
+  margin: 2rem;
+}
+.testxyz {
+  margin: 0.4rem;
+}
+
+[data-colorshift]:before {
+  content: "Make It " attr(data-colorshift);
+}
+
+code {
+  font-family: "Courier New", Courier, monospace;
+  color: green;
+}
