@@ -1,6 +1,6 @@
 // some DOM plumbing
-import { htmlRestrictions } from "./AllHtmlElements.js";
-let cleanupTagInfo = htmlRestrictions();
+import { htmlElementList } from "./AllHtmlElements.js";
+let cleanupTagInfo = htmlElementList;
 const getRestricted = () => Object.entries(cleanupTagInfo)
   .reduce( (acc, val) => !val[1].allowed && [...acc, val[0]] || acc, [] ).join(", "); 
 

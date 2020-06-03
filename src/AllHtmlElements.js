@@ -1,7 +1,4 @@
-export const htmlRestrictions = getAllActive;
-
-function getAllActive() {
-  return {
+export const htmlElementList = {
       a: { elem: HTMLAnchorElement, allowed: true },
       area: { elem: HTMLAreaElement, allowed: false },
       audio: { elem: HTMLAudioElement, allowed: false },
@@ -60,4 +57,3 @@ function getAllActive() {
       ul: { elem: HTMLUListElement, allowed: true },
       video: { elem: HTMLVideoElement, allowed: false },
   };
-}
