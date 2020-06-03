@@ -68,7 +68,7 @@ export const main = () => {
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
-    notAllowedTags now: <code>${getRestricted()}</code>, so
+    notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code>, so
     no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`);
   log(`*test noPre, previous was rendered to: ${$("#nopre").html()}`);
 
@@ -79,11 +79,11 @@ export const main = () => {
   setAllowance("pre", true);
   $(
     `<div>
-      <p>notAllowedTags reset: <code>${getRestricted()}</code>, so</p>
+      <p>notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so</p>
       <pre>Yes! &lt;pre&gt; is allowed again</pre>
      </div>`
   );
 
   /** what is not allowed (via notAllowedAttrs without attributes)? */
-  log(`*Currently not allowed attributes: ${getRestricted()}`);
+  log(`*Currently not allowed attributes: ${notAllowedAttrs()}`);
 };

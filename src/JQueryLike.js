@@ -1,8 +1,9 @@
 // some DOM plumbing
 import { htmlElementList } from "./AllHtmlElements.js";
 let cleanupTagInfo = htmlElementList;
-const getRestricted = () => Object.entries(cleanupTagInfo)
-  .reduce( (acc, val) => !val[1].allowed && [...acc, val[0]] || acc, [] ).join(", "); 
+const getRestricted = emphasizeTag => Object.entries(cleanupTagInfo)
+  .reduce( (acc, val) => 
+    !val[1].allowed && [...acc, (emphasizeTag && val[0] === emphasizeTag ? "***" : "") + val[0]] || acc, [] )
 
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 const setAllowance = (tag, allowed = false) => {
