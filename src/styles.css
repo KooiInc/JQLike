@@ -10,7 +10,9 @@ body {
 [data-colorshift]:before {
   content: "Make It " attr(data-colorshift);
 }
-
+pre {
+  max-width: inherit;
+}
 code {
   font-family: "Courier New", Courier, monospace;
   color: green;
