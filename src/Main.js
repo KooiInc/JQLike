@@ -1,5 +1,7 @@
+// see also
+// https://codesandbox.io/s/domandjquerylikecombination
 import { jql } from "./JQueryLike.js";
-const { $, log, debugLog, setCleanupTagAllowed, notAllowedAttrs } = jql();
+const { $, log, debugLog, setAllowance, getRestricted } = jql();
 
 export const main = () => {
   debugLog(true);
@@ -48,7 +50,7 @@ export const main = () => {
     backgroundColor: "#EEE",
     padding: "4px",
     marginTop: "1.5rem",
-    maxWidth: "500px",
+    maxWidth: "inherit",
     border: "1px solid #777"
   });
 
@@ -62,25 +64,26 @@ export const main = () => {
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
 
   /** disallow <pre> for added html */
-  setCleanupTagAllowed("pre", HTMLPreElement, false);
+  setAllowance("pre", false);
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
-    notAllowedTags now: <code>${setCleanupTagAllowed()}</code>, so
+    notAllowedTags now: <code>${getRestricted()}</code>, so
     no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`);
   log(`*test noPre, previous was rendered to: ${$("#nopre").html()}`);
 
   /** throws (no element after cleanup), but caught */
   $("<pre>This will not render and throw (silently)</pre>").addClass("booh");
 
-  setCleanupTagAllowed("pre", HTMLPreElement, true);
+  /** reallow <pre> */
+  setAllowance("pre", true);
   $(
     `<div>
-      <p>notAllowedTags reset: <code>${setCleanupTagAllowed()}</code>, so</p>
+      <p>notAllowedTags reset: <code>${getRestricted()}</code>, so</p>
       <pre>Yes! &lt;pre&gt; is allowed again</pre>
      </div>`
   );
 
-  /** what is not allowed? */
-  log(`*Currently not allowed attributes: ${notAllowedAttrs()}`);
+  /** what is not allowed (via notAllowedAttrs without attributes)? */
+  log(`*Currently not allowed attributes: ${getRestricted()}`);
 };

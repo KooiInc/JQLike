@@ -1,27 +1,15 @@
 // some DOM plumbing
+import { htmlRestrictions } from "./AllHtmlElements.js";
+let cleanupTagInfo = htmlRestrictions();
+const getRestricted = () => Object.entries(cleanupTagInfo)
+  .reduce( (acc, val) => !val[1].allowed && [...acc, val[0]] || acc, [] ).join(", "); 
+
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
-let cleanupTagInfo = {
-  audio: { elem: HTMLAudioElement, allowed: false },
-  canvas: { elem: HTMLCanvasElement, allowed: false },
-  data: { elem: HTMLDataElement, allowed: false },
-  dialog: { elem: HTMLDialogElement, allowed: false },
-  document: { elem: HTMLDocument, allowed: false },
-  embed: { elem: HTMLEmbedElement, allowed: false },
-  frameset: { elem: HTMLFrameSetElement, allowed: false },
-  head: { elem: HTMLHeadElement, allowed: false },
-  html: { elem: HTMLHtmlElement, allowed: false },
-  iframe: { elem: HTMLIFrameElement, allowed: false },
-  media: { elem: HTMLMediaElement, allowed: false },
-  meter: { elem: HTMLMeterElement, allowed: false },
-  object: { elem: HTMLObjectElement, allowed: false },
-  script: { elem: HTMLScriptElement, allowed: false },
-  source: { elem: HTMLSourceElement, allowed: false },
-  style: { elem: HTMLStyleElement, allowed: false },
-  template: { elem: HTMLTemplateElement, allowed: false },
-  time: { elem: HTMLTimeElement, allowed: false },
-  title: { elem: HTMLTitleElement, allowed: false },
-  track: { elem: HTMLTrackElement, allowed: false },
-  video: { elem: HTMLVideoElement, allowed: false }
+const setAllowance = (tag, allowed = false) => {
+  console.log(tag);
+  if (cleanupTagInfo[tag]) {
+    cleanupTagInfo[tag] = { ...cleanupTagInfo[tag], allowed: allowed }
+  }
 };
 let useLogging = false;
 const cleanupHtml = elem => {
@@ -37,7 +25,7 @@ const cleanupHtml = elem => {
           }
         });
       if ( Object.values(cleanupTagInfo)
-            .find(c => !c.allowed && child instanceof c.elem) ) {
+            .find(c => c.allowed === false && child instanceof c.elem) ) {
         child.parentNode.removeChild(child);
       }
     }
@@ -69,6 +57,7 @@ const log = txt => {
     logEl.style.left = "1rem";
     logEl.style.right = "1rem";
     logEl.style.padding = "0.5rem 1rem";
+    logEl.style.maxWidth = "inherit";
     logEl.style.border = "1px dotted #777";
   }
   document.querySelector("#jql_logger").textContent += `.${txt}\n`;
@@ -228,20 +217,13 @@ export const jql = () => {
     $: (...args) => new ExtendedNodeList(...args),
     log: log,
     debugLog: logVal => (useLogging = logVal),
-    setCleanupTagAllowed: (tag, elem, allowed = false) => {
-      if (tag && elem) {
-        cleanupTagInfo[tag] = { elem: elem, allowed: allowed };
-      }
-      return `[${Object.entries(cleanupTagInfo)
-        .filter( ([value]) => !value.allowed )
-        .map( ([key]) => key )
-        .join(", ")}]`;
-    },
     notAllowedAttrs: attrsRegExp => {
       if (attrsRegExp && attrsRegExp instanceof RegExp) {
         notAllowedAttributes = attrsRegExp;
       }
       return notAllowedAttributes;
-    }
+    },
+    getRestricted,
+    setAllowance,
   };
 };
