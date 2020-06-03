@@ -6,7 +6,6 @@ const getRestricted = () => Object.entries(cleanupTagInfo)
 
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 const setAllowance = (tag, allowed = false) => {
-  console.log(tag);
   if (cleanupTagInfo[tag]) {
     cleanupTagInfo[tag] = { ...cleanupTagInfo[tag], allowed: allowed }
   }
