@@ -1,6 +1,7 @@
 body {
   font: normal 12px/15px verdana, arial;
   margin: 2rem;
+  max-width: 35vw;
 }
 .testxyz {
   margin: 0.4rem;
