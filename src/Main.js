@@ -4,7 +4,7 @@ import { jql } from "./JQueryLike.js";
 const { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } = jql();
 
 export const main = () => {
-  debugLog(true);
+  debugLog.on();
   $(`<h2>Testing a DOM Helper (using proxy) and JQ-alike stuff</h2>`);
 
   const colors = {
