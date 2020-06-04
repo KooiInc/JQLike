@@ -1,7 +1,7 @@
 // see also
 // https://codesandbox.io/s/domandjquerylikecombination
 import { jql } from "./JQueryLike.js";
-const { $, log, debugLog, setAllowance, getRestricted } = jql();
+const { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } = jql();
 
 export const main = () => {
   debugLog(true);
@@ -55,7 +55,7 @@ export const main = () => {
   });
 
   log(`QED - the html is clean:\n${$("#cleanupTesting").html()}`);
-  
+
   $(
     `<XStyle>&lt;XStyle> is not a valid tag but it will not throw</XStyle>`
   ).attr({ style: "color: orange" });
