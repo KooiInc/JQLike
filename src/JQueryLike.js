@@ -1,7 +1,5 @@
-// some DOM plumbing
-import extensions from "./Extensions.js";
-import {DOM} from "./DOM.js";
-const {getRestricted, fromHtml, setAllowance, notAllowedAttrs} = DOM;
+import {iterate, extensions} from "./Extensions.js";
+import {getRestricted, fromHtml, setAllowance, notAllowedAttrs}  from "./DOM.js";
 
 let useLogging = false;
 const log = txt => {
@@ -18,13 +16,6 @@ const log = txt => {
     logEl.style.border = "1px dotted #777";
   }
   document.querySelector("#jql_logger").textContent += `.${txt}\n`;
-};
-// the allmighty iterator
-const iterate = (extCollection, callback) => {
-  for (let i = 0; i < extCollection.collection.length; i += 1) {
-    callback(extCollection.collection[i]);
-  }
-  return extCollection;
 };
 
 // the prototype initializer
