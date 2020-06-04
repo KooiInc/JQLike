@@ -1,3 +1,2 @@
 /src/snips.js
-node_modules/
-node_modules/*/
+/src/node_modules/
