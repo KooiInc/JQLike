@@ -1,4 +1,5 @@
-export const htmlElementList = {
+// noinspection JSUnresolvedVariable
+export default {
       a: { elem: HTMLAnchorElement, allowed: true },
       area: { elem: HTMLAreaElement, allowed: false },
       audio: { elem: HTMLAudioElement, allowed: false },
@@ -8,10 +9,10 @@ export const htmlElementList = {
       button: { elem: HTMLButtonElement, allowed: true },
       canvas: { elem: HTMLCanvasElement, allowed: false },
       content: { elem: HTMLContentElement, allowed: false },
-      dl: { elem: HTMLDListElement, allowed: true }, // description list
+      dl: { elem: HTMLDListElement, allowed: true },
       data: { elem: HTMLDataElement, allowed: false },
-      datalist: { elem: HTMLDataListElement, allowed: true }, // sort of select
-      div: { elem: HTMLDivElement, allowed: true, allowed: true },
+      datalist: { elem: HTMLDataListElement, allowed: true },
+      div: { elem: HTMLDivElement, allowed: true },
       embed: { elem: HTMLEmbedElement, allowed: false },
       fieldset: { elem: HTMLFieldSetElement, allowed: true },
       form: { elem: HTMLFormElement, allowed: false },
