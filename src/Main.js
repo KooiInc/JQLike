@@ -1,10 +1,11 @@
 // see also
 // https://codesandbox.io/s/domandjquerylikecombination
-import { jql } from "./JQueryLike.js";
-const { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } = jql();
-
+// ------------------------------------------------------------------------------------------------------------
+// for production you'll only need $
+import { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
 export const main = () => {
   debugLog.on();
+
   $(`<h2>Testing a DOM Helper (using proxy) and JQ-alike stuff</h2>`);
 
   const colors = {

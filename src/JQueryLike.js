@@ -1,5 +1,5 @@
-import {iterate, extensions} from "./Extensions.js";
-import {getRestricted, fromHtml, setAllowance, notAllowedAttrs}  from "./DOM.js";
+import {iterate, extensions} from "../Modules/Extensions.js";
+import {getRestricted, fromHtml, setAllowance, notAllowedAttrs}  from "../Modules/DOM.js";
 
 let useLogging = false;
 const log = txt => {
@@ -53,7 +53,7 @@ const setPrototype = (ctor, extensions) => {
 };
 
 // -------------------------------------------------------------------- //
-export const jql = () => {
+const jql = () => {
   function ExtendedNodeList(selector, root = document.body) {
     if (ExtendedNodeList.prototype.isSet === undefined) {
       setPrototype(ExtendedNodeList, extensions);
@@ -83,10 +83,9 @@ export const jql = () => {
 
   return {
     $: (...args) => new ExtendedNodeList(...args),
-    log,
-    debugLog: { on: () => useLogging = true, off: useLogging = false },
-    notAllowedAttrs,
-    getRestricted,
-    setAllowance,
   };
 };
+
+const $ = jql().$;
+const debugLog = { on: () => useLogging = true, off: useLogging = false };
+export { $, debugLog, log, notAllowedAttrs, getRestricted, setAllowance };

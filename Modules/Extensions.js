@@ -82,6 +82,6 @@
         return undefined;
       }
     }
-};
+  };
 
-export {iterate, extensions};
+  export { iterate, extensions };
