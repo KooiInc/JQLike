@@ -20,26 +20,21 @@ const log = txt => {
 
 // the prototype initializer
 const setPrototype = (ctor, extensions) => {
-  Object.entries(Object.getOwnPropertyDescriptors(Element.prototype)).forEach(
-    ([key, { value }]) => {
-      if (value instanceof Function) {
-        ctor.prototype[key] = function(...args) {
-          return iterate(this, elem => value.apply(elem, args));
-        };
-      }
-    }
-  );
+  Object.entries(Object.getOwnPropertyDescriptors(Element.prototype))
+    .filter( propDescriptr => propDescriptr.value instanceof Function)
+    .forEach( ([key, { value }]) =>
+      ctor.prototype[key] = function(...args) {
+        return iterate(this, elem => value.apply(elem, args));
+    } );
 
-  Object.entries(Object.getOwnPropertyDescriptors(NodeList.prototype)).forEach(
-    ([key, { value }]) => {
-      if (value instanceof Function) {
+  Object.entries(Object.getOwnPropertyDescriptors(NodeList.prototype))
+    .filter( propDescriptr => propDescriptr.value instanceof Function)
+    .forEach( ([key]) => {
         ctor.prototype[key] = function(lambda) {
           this.collection[key](lambda);
           return this;
         };
-      }
-    }
-  );
+    } );
 
   Object.entries(extensions).forEach(([key, lambda]) => {
     ctor.prototype[key] = function(...args) {
