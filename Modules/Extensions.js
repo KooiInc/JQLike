@@ -1,5 +1,6 @@
 // all extensions
 import { cleanupHtml, fromHtml, getRestricted, setAllowance, notAllowedAttrs }  from "./DOM.js";
+import { log, debugLog, logStatus } from "./Log.js";
 
 // the allmighty iterator
 // noinspection JSUnusedGlobalSymbols
@@ -49,26 +50,27 @@ const extensions = {
           .join(" ")
     },
     css: (el, css) =>
-      Object.entries(css).forEach(([key, value]) => (el.style[key] = value)),
+      Object.entries(css).forEach( ([key, value]) => el.style[key] = value ),
     appendText: (el, value) => (el.textContent += value),
     html: {
-      fn: (extCollection, htmlValue) =>
-        [...extCollection.collection]
+      fn: (extCollection, htmlValue, append) => {
+        if (!htmlValue) {
+          return [...extCollection.collection]
+            .reduce((acc, el) => [...acc, el.innerHTML], []).join(" # ");
+        }
+        extCollection.collection = [...extCollection.collection]
           .reduce((acc, el) => {
-            if (htmlValue) {
+            if (append) {
+              el.innerHTML += htmlValue;
+            } else {
               el.innerHTML = htmlValue;
-              // noinspection ES6ModulesDependencies
-              el.parentNode.replaceChild(cleanupHtml(el), el);
             }
-            return [...acc, el.innerHTML];
-          }, [])
-          .join(" ")
-    },
-    appendHtml: (el, value) => {
-      if (value) {
-        el.innerHTML += value;
-        // noinspection ES6ModulesDependencies
-        el.parentNode.replaceChild(cleanupHtml(el), el);
+            requestAnimationFrame( function() {
+              el.parentNode && el.parentNode.replaceChild(cleanupHtml(el), el);
+            } );
+            return [...acc, el];
+          }, []);
+        return extCollection;
       }
     },
     toggleAttr: (el, name, value) =>
@@ -80,10 +82,12 @@ const extensions = {
     },
     single: {
       fn: (extCollection, index = 0) => {
-        if (extCollection.collection.length > 0) {
-          const nwCollection = new this.constructor();
-          nwCollection.collection = [extCollection.collection[index]];
+        if (extCollection.collection.length > 0 && index < extCollection.collection.length) {
+          const nwCollection = new extCollection
+            .constructor(extCollection.collection[index]);
           return nwCollection;
+        } else {
+          return extCollection;
         }
       }
     },
@@ -97,4 +101,4 @@ const extensions = {
     },
   };
 
-export { loop, fromHtml, extensions, notAllowedAttrs, getRestricted, setAllowance };
+export { loop, fromHtml, extensions, notAllowedAttrs, getRestricted, setAllowance, log, debugLog, logStatus };

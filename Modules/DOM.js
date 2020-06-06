@@ -57,12 +57,12 @@ const notAllowedAttrs = attrsRegExp => {
 // create DOM element from [htmlStr], within [node]
 // The resulting element is always cleaned using the
 // attrbutes/tags settings
-const fromHtml = (htmlStr, node = document.body) => {
+const fromHtml = (htmlStr, root = document.body) => {
   const nwElem = htmlToVirtualElement(htmlStr);
   if (!nwElem) {
     throw new RangeError(`${htmlStr} contains no valid elements`);
   }
-  node.appendChild(nwElem);
+  root.appendChild(nwElem);
   return nwElem;
 };
 

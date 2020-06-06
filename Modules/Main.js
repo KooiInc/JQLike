@@ -4,7 +4,7 @@
 // for production you'll only need $
 import { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
 export const main = () => {
-  debugLog.on();
+  //debugLog.on();
 
   $(`<h2>Testing a DOM Helper (using proxy) and JQ-alike stuff</h2>`);
 
@@ -71,7 +71,9 @@ export const main = () => {
   $(`<div id="nopre" style="margin-top:1rem">
     notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code>, so
     no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
-    .appendHtml("<p><i>TEST appendHtml</i> (dependancy chain originates from JQueryLike)</p>");
+    .html(`<p>
+      <i>TEST append html</i> (<code>html([...], true)</code>)
+      (dependancy chain originates from JQueryLike)</p>`, true);
   log(`*test noPre, previous was rendered to: ${$("#nopre").html()}`);
 
   /** throws (no element after cleanup), but caught */
@@ -85,6 +87,24 @@ export const main = () => {
       <pre>Yes! &lt;pre&gt; is allowed again</pre>
      </div>`
   );
+
+  $(`<div>
+      <code>
+        $("&lt;p&gt;&lt;/p&gt;").html("test html() extension function for a newly created element from html string")
+      </code> =&gt;
+    </div>`)
+  $(`<div></div>`).html(`test html() extension function for a newly created element from html string`);
+
+  $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
+    .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
+    .single(1)
+    .html(`
+      <br>&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
+      text <i>and</i> all text should be green)`
+      , true)
+    .css({color: "green"});
+
+
 
   /** what is not allowed (via notAllowedAttrs without attributes)? */
   log(`*Currently not allowed attributes: ${notAllowedAttrs()}`);

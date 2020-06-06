@@ -1,5 +1,5 @@
-import { extensions, getRestricted, setAllowance, fromHtml, notAllowedAttrs, loop  } from "./Extensions.js";
-import { log, debugLog, logStatus } from "./Log.js";
+import { extensions, getRestricted, setAllowance, fromHtml, notAllowedAttrs, loop, log, debugLog, logStatus  }
+  from "./Extensions.js";
 
 // the prototype initializer
 const setPrototype = (ctor, extensions) => {
@@ -32,30 +32,48 @@ const setPrototype = (ctor, extensions) => {
 
 // -------------------------------------------------------------------- //
 const $ = (() => {
-  function ExtendedNodeList(selector, root = document.body) {
+  function ExtendedNodeList(selectorOrHtml, root = document.body) {
     if (ExtendedNodeList.prototype.isSet === undefined) {
       setPrototype(ExtendedNodeList, extensions);
     }
+    this.collection = [];
 
     try {
-      if ( String(selector).trim().startsWith("<") ) {
-        if (logStatus()) {
-          log(`trying to create ... [${selector}]`);
+      if (selectorOrHtml) {
+        if (selectorOrHtml instanceof HTMLElement) {
+          this.collection = [selectorOrHtml];
+        } else if ( selectorOrHtml.constructor === Array ||
+          `${selectorOrHtml}`.trim().startsWith("<") ) {
+
+          if (logStatus()) {
+            log(`trying to create ... [${selectorOrHtml}]`);
+          }
+
+          if (selectorOrHtml.constructor === Array) {
+            const tmp = [];
+            selectorOrHtml.forEach(html => tmp.push(fromHtml(html)));
+            this.collection = this.collection.concat(tmp);
+          } else {
+            this.collection = [fromHtml(selectorOrHtml, root)];
+          }
+
+          if (logStatus()) {
+            log(`created element: *clean: [${this.collection[0].outerHTML}]`);
+          }
+        } else if (selectorOrHtml) {
+          this.collection = root.querySelectorAll(selectorOrHtml);
+        } else {
+          log(`No css selector, assign empty collection`);
         }
-        this.collection = [fromHtml(selector, root)];
-        if (logStatus()) {
-          log(`created element: *clean: [${this.collection[0].outerHTML}]`);
-        }
-      } else if (selector) {
-        this.collection = root.querySelectorAll(selector);
-      } else {
-        log(`No css selector, assign empty collection`);
-        this.collection = [];
+        return this;
       }
     } catch (err) {
-      const msg = `jql selector or html error: "${err.message}"`;
-      if (logStatus()) { log(msg); } else { console.log(msg); }
-      this.collection = [];
+      const msg = `jql selector or html error: "${err.message}". ${err.stack}`;
+      if (logStatus()) {
+        log(msg);
+      } else {
+        console.log(msg);
+      }
     }
   }
 
