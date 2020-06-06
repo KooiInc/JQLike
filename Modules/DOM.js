@@ -72,4 +72,5 @@ export {
   setAllowance,
   notAllowedAttrs,
   fromHtml,
+  cleanupHtml,
 };

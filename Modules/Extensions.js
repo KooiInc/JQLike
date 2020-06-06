@@ -1,12 +1,17 @@
-  // the allmighty iterator
-  const iterate = (extCollection, callback) => {
-    for (let i = 0; i < extCollection.collection.length; i += 1) {
-      callback(extCollection.collection[i]);
-    }
-    return extCollection;
-  };
-  // all extensions
-  const extensions = {
+// all extensions
+import { cleanupHtml, fromHtml, getRestricted, setAllowance, notAllowedAttrs }  from "./DOM.js";
+
+// the allmighty iterator
+// noinspection JSUnusedGlobalSymbols
+const loop = (extCollection, callback) => {
+  for (let i = 0; i < extCollection.collection.length; i += 1) {
+    callback(extCollection.collection[i]);
+  }
+  return extCollection;
+};
+
+// noinspection JSUnusedGlobalSymbols
+const extensions = {
     toggleClass: (el, className) => el.classList.toggle(className),
     addClass: (el, classNames) =>
       (Array.isArray(classNames) ? classNames : [classNames]).forEach(cn =>
@@ -18,10 +23,16 @@
       ),
     attr: (el, keyValuePairs) =>
       Object.entries(keyValuePairs).forEach(([key, value]) => {
-        if (key.toLowerCase() === "data") {
-          Object.entries(value).forEach(([key, value]) =>
-            el.setAttribute(`data-${key}`, value)
-          );
+        const isData = key.toLowerCase() === "data";
+        const isStyle = key.toLowerCase() === "style";
+        if ((isData || isStyle) && value instanceof Object) {
+          Object.entries(value).forEach(([key, value]) => {
+              if (isStyle) {
+                el.style[key] = value;
+              } else {
+                el.setAttribute(`data-${key}`, value)
+              }
+            } );
         } else {
           el.setAttribute(key, value);
         }
@@ -46,6 +57,7 @@
           .reduce((acc, el) => {
             if (htmlValue) {
               el.innerHTML = htmlValue;
+              // noinspection ES6ModulesDependencies
               el.parentNode.replaceChild(cleanupHtml(el), el);
             }
             return [...acc, el.innerHTML];
@@ -55,6 +67,7 @@
     appendHtml: (el, value) => {
       if (value) {
         el.innerHTML += value;
+        // noinspection ES6ModulesDependencies
         el.parentNode.replaceChild(cleanupHtml(el), el);
       }
     },
@@ -63,13 +76,13 @@
         ? el.removeAttribute(name)
         : el.setAttribute(name, value),
     each: {
-      fn: (collection, callback) => iterate(collection, callback)
+      fn: (collection, callback) => collection.forEach(collection, callback)
     },
     single: {
-      fn: extCollection => {
+      fn: (extCollection, index = 0) => {
         if (extCollection.collection.length > 0) {
           const nwCollection = new this.constructor();
-          nwCollection.collection = [extCollection.collection[0]];
+          nwCollection.collection = [extCollection.collection[index]];
           return nwCollection;
         }
       }
@@ -81,7 +94,7 @@
         }
         return undefined;
       }
-    }
+    },
   };
 
-  export { iterate, extensions };
+export { loop, fromHtml, extensions, notAllowedAttrs, getRestricted, setAllowance };

@@ -1,5 +1,4 @@
-// noinspection JSUnresolvedVariable
-export default {
+const allHtml = {
       a: { elem: HTMLAnchorElement, allowed: true },
       area: { elem: HTMLAreaElement, allowed: false },
       audio: { elem: HTMLAudioElement, allowed: false },
@@ -8,7 +7,6 @@ export default {
       body: { elem: HTMLBodyElement, allowed: false },
       button: { elem: HTMLButtonElement, allowed: true },
       canvas: { elem: HTMLCanvasElement, allowed: false },
-      content: { elem: HTMLContentElement, allowed: false },
       dl: { elem: HTMLDListElement, allowed: true },
       data: { elem: HTMLDataElement, allowed: false },
       datalist: { elem: HTMLDataListElement, allowed: true },
@@ -58,3 +56,9 @@ export default {
       ul: { elem: HTMLUListElement, allowed: true },
       video: { elem: HTMLVideoElement, allowed: false },
   };
+
+if (window["HTMLContentElement"]) {
+  allHtml.content = { elem: window["HTMLContentElement"], allowed: false };
+}
+
+export default allHtml;
