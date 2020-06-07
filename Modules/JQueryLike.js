@@ -1,4 +1,4 @@
-import { extensions, getRestricted, setTagAllowance, fromHtml, notAllowedAttrs, loop, log, debugLog, logStatus  }
+import { extensions, getRestricted, setTagPermission, fromHtml, notAllowedAttrs, loop, log, debugLog, logStatus  }
   from "./Extensions.js";
 
 // the prototype initializer
@@ -68,7 +68,7 @@ const $ = (() => {
         return this;
       }
     } catch (err) {
-      const msg = `jql selector or html error: "${err.message}". ${err.stack}`;
+      const msg = `Caught jql selector or html error: "${err.message}". ${err.stack}`;
       if (logStatus()) {
         log(msg);
       } else {
@@ -82,4 +82,4 @@ const $ = (() => {
   };
 })().$;
 
-export { $, debugLog, log, notAllowedAttrs, getRestricted, setTagAllowance };
+export { $, debugLog, log, notAllowedAttrs, getRestricted, setTagPermission };

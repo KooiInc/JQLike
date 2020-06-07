@@ -2,6 +2,7 @@
 import cleanupTagInfo from "./AllHtmlElements.js";
 
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
+const emphasize = str => `***${str}***`;
 
 // clean html based from disallowed tags and/or attributes
 const cleanupHtml = elem => {
@@ -36,12 +37,16 @@ const htmlToVirtualElement = htmlString => {
 
 // retrieve currently disallowed html tags
 // optionally emphasize a tag in the reporting [emphasizeTag]
-const getRestricted = emphasizeTag => Object.entries(cleanupTagInfo)
-  .reduce( (acc, val) =>
-    !val[1].allowed && [...acc, (emphasizeTag && val[0] === emphasizeTag ? "***" : "") + val[0]] || acc, [] );
+const getRestricted = emphasizeTag =>
+  Object.entries(cleanupTagInfo)
+    .reduce( ( acc, [key, value] ) =>
+      !value.allowed &&
+        [...acc, (emphasizeTag && key === emphasizeTag ? emphasize(key) : key)] ||
+        acc
+      , [] );
 
 // set [allowed] state (boolean) for [tag] (string)
-const setTagAllowance = (tagName, allowed = false) => {
+const setTagPermission = (tagName, allowed = false) => {
   if (cleanupTagInfo[tagName]) {
     cleanupTagInfo[tagName] = { ...cleanupTagInfo[tagName], allowed: allowed }
   }
@@ -55,7 +60,7 @@ const notAllowedAttrs = attrsRegExp => {
   return notAllowedAttributes;
 };
 
-// create DOM element from [htmlStr], within [node]
+// create DOM element from [htmlStr], within [root]
 // The resulting element is always cleaned using the
 // attrbutes/tags settings
 const fromHtml = (htmlStr, root = document.body) => {
@@ -71,7 +76,7 @@ const fromHtml = (htmlStr, root = document.body) => {
 export {
   getRestricted,
   cleanupTagInfo,
-  setTagAllowance,
+  setTagPermission,
   notAllowedAttrs,
   fromHtml,
   cleanupHtml,

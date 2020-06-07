@@ -2,9 +2,10 @@
 // https://codesandbox.io/s/domandjquerylikecombination
 // ------------------------------------------------------------------------------------------------------------
 // for production you'll only need $
-import { $, log, debugLog, setTagAllowance, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
+import { $, log, debugLog, setTagPermission, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
 export const main = () => {
-  //debugLog.on();
+  // to follow tag creation etc. use .on()
+  debugLog.off();
 
   $(`<h2>Testing a DOM Helper (using proxy) and JQ-alike stuff</h2>`);
 
@@ -57,15 +58,15 @@ export const main = () => {
 
   log(`QED - the html is clean:\n${$("#cleanupTesting").html()}`);
 
-  $(
-    `<XStyle>&lt;XStyle> is not a valid tag but it will not throw</XStyle>`
-  ).attr({ style: "color: orange" });
+  // currently not checking for invalid tags
+  $( `<XStyle>&lt;XStyle> is not a valid tag but it will not throw</XStyle>` )
+    .attr({ style: "color: orange" });
 
   /** this will throw but the error is caught (see console) */
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
 
   /** disallow <pre> for added html */
-  setTagAllowance("pre", false);
+  setTagPermission("pre", false);
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
@@ -80,7 +81,7 @@ export const main = () => {
   $("<pre>This will not render and throw (silently)</pre>").addClass("booh");
 
   /** reallow <pre> */
-  setTagAllowance("pre", true);
+  setTagPermission("pre", true);
   $(
     `<div>
       notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
