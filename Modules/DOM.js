@@ -1,5 +1,6 @@
 // some DOM plumbing
 import cleanupTagInfo from "./AllHtmlElements.js";
+
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 
 // clean html based from disallowed tags and/or attributes
@@ -16,7 +17,7 @@ const cleanupHtml = elem => {
           }
         });
       if ( Object.values(cleanupTagInfo)
-        .find(c => c.allowed === false && child instanceof c.elem) ) {
+        .find(c => !c.allowed && child instanceof c.elem) ) {
         child.parentNode.removeChild(child);
       }
     }
@@ -35,12 +36,12 @@ const htmlToVirtualElement = htmlString => {
 
 // retrieve currently disallowed html tags
 // optionally emphasize a tag in the reporting [emphasizeTag]
-const getRestricted= emphasizeTag => Object.entries(cleanupTagInfo)
+const getRestricted = emphasizeTag => Object.entries(cleanupTagInfo)
   .reduce( (acc, val) =>
     !val[1].allowed && [...acc, (emphasizeTag && val[0] === emphasizeTag ? "***" : "") + val[0]] || acc, [] );
 
 // set [allowed] state (boolean) for [tag] (string)
-const setAllowance= (tagName, allowed = false) => {
+const setTagAllowance = (tagName, allowed = false) => {
   if (cleanupTagInfo[tagName]) {
     cleanupTagInfo[tagName] = { ...cleanupTagInfo[tagName], allowed: allowed }
   }
@@ -59,6 +60,7 @@ const notAllowedAttrs = attrsRegExp => {
 // attrbutes/tags settings
 const fromHtml = (htmlStr, root = document.body) => {
   const nwElem = htmlToVirtualElement(htmlStr);
+
   if (!nwElem) {
     throw new RangeError(`${htmlStr} contains no valid elements`);
   }
@@ -69,7 +71,7 @@ const fromHtml = (htmlStr, root = document.body) => {
 export {
   getRestricted,
   cleanupTagInfo,
-  setAllowance,
+  setTagAllowance,
   notAllowedAttrs,
   fromHtml,
   cleanupHtml,

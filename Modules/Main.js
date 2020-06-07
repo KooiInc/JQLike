@@ -2,7 +2,7 @@
 // https://codesandbox.io/s/domandjquerylikecombination
 // ------------------------------------------------------------------------------------------------------------
 // for production you'll only need $
-import { $, log, debugLog, setAllowance, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
+import { $, log, debugLog, setTagAllowance, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
 export const main = () => {
   //debugLog.on();
 
@@ -65,7 +65,7 @@ export const main = () => {
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
 
   /** disallow <pre> for added html */
-  setAllowance("pre", false);
+  setTagAllowance("pre", false);
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
@@ -80,20 +80,20 @@ export const main = () => {
   $("<pre>This will not render and throw (silently)</pre>").addClass("booh");
 
   /** reallow <pre> */
-  setAllowance("pre", true);
+  setTagAllowance("pre", true);
   $(
     `<div>
-      <p>notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so</p>
-      <pre>Yes! &lt;pre&gt; is allowed again</pre>
+      notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
+      <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`
   );
 
   $(`<div>
       <code>
-        $("&lt;p&gt;&lt;/p&gt;").html("test html() extension function for a newly created element from html string")
-      </code> =&gt;
+        $("&lt;div/&gt;").html("test html() extension function for a newly created element from html string")
+      </code> result =&gt;
     </div>`)
-  $(`<div></div>`).html(`test html() extension function for a newly created element from html string`);
+  $(`<div/>`).html(`test html() extension function for a newly created element from html string`);
 
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
     .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
@@ -103,8 +103,6 @@ export const main = () => {
       text <i>and</i> all text should be green)`
       , true)
     .css({color: "green"});
-
-
 
   /** what is not allowed (via notAllowedAttrs without attributes)? */
   log(`*Currently not allowed attributes: ${notAllowedAttrs()}`);
