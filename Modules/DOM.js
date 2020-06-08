@@ -67,7 +67,7 @@ const fromHtml = (htmlStr, root = document.body) => {
   const nwElem = htmlToVirtualElement(htmlStr);
 
   if (!nwElem) {
-    throw new RangeError(`${htmlStr} contains no valid elements`);
+    throw new RangeError(`"${htmlStr}" contains no valid element(s)`);
   }
   root.appendChild(nwElem);
   return nwElem;
