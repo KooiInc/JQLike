@@ -49,10 +49,9 @@ const $ = (() => {
             log(`trying to create ... [${selectorOrHtml}]`);
           }
 
-          if (selectorOrHtml.constructor === Array) {
-            const tmp = [];
-            selectorOrHtml.forEach(html => tmp.push(fromHtml(html)));
-            this.collection = this.collection.concat(tmp);
+          if (Array.isArray(selectorOrHtml)) {
+            selectorOrHtml.forEach( html =>
+               this.collection.push(fromHtml(html, root)) );
           } else {
             this.collection = [fromHtml(selectorOrHtml, root)];
           }
@@ -68,7 +67,7 @@ const $ = (() => {
         return this;
       }
     } catch (err) {
-      const msg = `Caught jql selector or html error: "${err.message}". ${err.stack}`;
+      const msg = `Caught jql selector or html error:\n${err.stack}`;
       if (logStatus()) {
         log(msg);
       } else {
