@@ -1,13 +1,17 @@
-// see also
-// https://codesandbox.io/s/domandjquerylikecombination
-// ------------------------------------------------------------------------------------------------------------
-// for production you'll only need $
+// -------------------------------------------
+// for production you'll probably only need $
+// -------------------------------------------
+
 import { $, log, debugLog, setTagPermission, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
 export const main = () => {
-  // to follow tag creation etc. use .on()
-  debugLog.off();
+  // to follow tag creation etc. use debugLog.on
+  debugLog.off;
 
-  $(`<h2>Testing a DOM Helper (using proxy) and JQ-alike stuff</h2>`);
+  $( [
+      `<h2>Testing a JQ-alike html helper library</h2>`,
+      `<p>
+          <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
+        </p>`] );
 
   const colors = {
     Red: "Green",
@@ -56,9 +60,7 @@ export const main = () => {
     border: "1px solid #777"
   });
 
-  log(`QED - the html is clean:\n${$("#cleanupTesting").html()}`);
-
-  // currently not checking for invalid tags
+    // currently not checking for invalid tags
   $( `<XStyle>&lt;XStyle> is not a valid tag but it will not throw</XStyle>` )
     .attr({ style: "color: orange" });
 
@@ -70,12 +72,11 @@ export const main = () => {
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
-    notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code>, so
+    notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code>, so<br>
     no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
     .html(`<p>
       <i>TEST append html</i> (<code>html([...], true)</code>)
       (dependancy chain originates from JQueryLike)</p>`, true);
-  log(`*test noPre, previous was rendered to: ${$("#nopre").html()}`);
 
   /** throws (no element after cleanup), but caught */
   $("<pre>This will not render and throw (silently)</pre>").addClass("booh");
@@ -104,7 +105,4 @@ export const main = () => {
       text <i>and</i> all text should be green)`
       , true)
     .css({color: "green"});
-
-  /** what is not allowed (via notAllowedAttrs without attributes)? */
-  log(`*Currently not allowed attributes: ${notAllowedAttrs()}`);
 };
