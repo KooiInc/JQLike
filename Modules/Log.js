@@ -1,7 +1,7 @@
 import { fromHtml } from "./DOM.js";
 
 let useLogging = false;
-const debugLog = { on: () => useLogging = true, off: useLogging = false };
+const debugLog = { get on() { useLogging = true; }, get off() { useLogging = false; } };
 const log = txt => {
   if (!document.querySelector("#jql_logger")) {
     const logBlock = fromHtml(`<pre id="jql_logger"></pre>`, document.body);
