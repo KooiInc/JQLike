@@ -4,6 +4,13 @@ import cleanupTagInfo from "./AllHtmlElements.js";
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 const emphasize = str => `***${str}***`;
 
+// Position helper
+const adjacents = {
+  BeforeBegin: "beforebegin", // before element
+  AfterBegin: "afterbegin",   // before first child
+  BeforeEnd: "beforeend",     // after last child
+  AfterEnd: "afterend" };     // after element
+
 // clean html based from disallowed tags and/or attributes
 const cleanupHtml = elem => {
   const template = document.createElement("template");
@@ -63,13 +70,13 @@ const notAllowedAttrs = attrsRegExp => {
 // create DOM element from [htmlStr], within [root]
 // The resulting element is always cleaned using the
 // attrbutes/tags settings
-const fromHtml = (htmlStr, root = document.body) => {
+const fromHtml = (htmlStr, root = document.body, position = adjacents.BeforeEnd) => {
   const nwElem = htmlToVirtualElement(htmlStr);
 
   if (!nwElem) {
     throw new RangeError(`"${htmlStr}" contains no valid element(s)`);
   }
-  root.appendChild(nwElem);
+  root.insertAdjacentElement(position, nwElem);
   return nwElem;
 };
 
