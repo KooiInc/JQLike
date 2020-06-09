@@ -10,6 +10,7 @@ export const main = () => {
   $( [
       `<h2>Testing a JQ-alike html helper library</h2>`,
       `<p>
+          Some jQuery-stuff is too good to loose. So here's a jQuery lite attempt.
           <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
         </p>`] );
 
