@@ -51,7 +51,7 @@ const extensions = {
     },
     css: (el, css) =>
       Object.entries(css).forEach( ([key, value]) => el.style[key] = value ),
-    appendText: (el, value) => (el.textContent += value),
+    appendText: (el, value) => el.textContent += value,
     html: {
       fn: (extCollection, htmlValue, append) => {
         if (!htmlValue) {
