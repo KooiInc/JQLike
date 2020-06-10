@@ -2,10 +2,12 @@
 // for production you'll probably only need $
 // -------------------------------------------
 
-import { $, log, debugLog, setTagPermission, getRestricted, notAllowedAttrs } from "./JQueryLike.js";
+import { $, log, debugLog, setTagPermission, getRestricted } from "./JQueryLike.js";
+
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
   debugLog.off;
+  console.clear();
 
   $( [
       `<h2>Testing a JQ-alike html helper library</h2>`,

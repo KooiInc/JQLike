@@ -1,4 +1,4 @@
-import { extensions, getRestricted, setTagPermission, fromHtml, notAllowedAttrs, loop, log, debugLog, logStatus  }
+import { extensions, getRestricted, setTagPermission, fromHtml, loop, log, debugLog, logStatus  }
   from "./Extensions.js";
 
 // the prototype initializer
@@ -81,4 +81,4 @@ const $ = (() => {
   };
 })().$;
 
-export { $, debugLog, log, notAllowedAttrs, getRestricted, setTagPermission };
+export { $, debugLog, log, getRestricted, setTagPermission };
