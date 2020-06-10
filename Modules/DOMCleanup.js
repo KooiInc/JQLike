@@ -1,3 +1,4 @@
+// initial set of tags and allowances
 const cleanupTagInfo = {
   a: {elem: HTMLAnchorElement, allowed: true},
   area: {elem: HTMLAreaElement, allowed: false},
@@ -56,13 +57,14 @@ const cleanupTagInfo = {
   ul: {elem: HTMLUListElement, allowed: true},
   video: {elem: HTMLVideoElement, allowed: false}
 };
-
+// browser compat
 if (window["HTMLContentElement"]) {
   cleanupTagInfo.content = {elem: window["HTMLContentElement"], allowed: false};
 }
+// regex not allowed attributes
+let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 
-const emphasize = str => `***${str}***`;
-
+// cleanup a given html element
 const cleanupHtml = elem => {
   const template = document.createElement("template");
   template.innerHTML = `<div id="placeholder">${elem.outerHTML}</div>`;
@@ -87,9 +89,9 @@ const cleanupHtml = elem => {
   return el2Clean.firstChild;
 };
 
-let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
-
+// get restricted tag
 // optionally emphasize a tag in the reporting [emphasizeTag]
+const emphasize = str => `***${str}***`;
 const getRestricted = emphasizeTag =>
   Object.entries(cleanupTagInfo)
     .reduce((acc, [key, value]) =>
@@ -98,10 +100,12 @@ const getRestricted = emphasizeTag =>
       acc
       , []);
 
-// set [allowed] state (boolean) for [tag] (string)
+// set [allowed] state (boolean) for [tagName] (string)
 const setTagPermission = (tagName, allowed = false) => {
   if (cleanupTagInfo[tagName]) {
-    cleanupTagInfo[tagName] = {...cleanupTagInfo[tagName], allowed: allowed};
+    cleanupTagInfo[tagName] = {
+      ...cleanupTagInfo[tagName.toLowerCase()],
+      allowed: allowed };
   }
 };
 
