@@ -1,2 +1,6 @@
 /src/snips.js
 /src/node_modules/
+/node_modules/
+/src/Dist/
+/CompileGCC.js
+/package.json
