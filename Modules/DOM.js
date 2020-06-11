@@ -1,5 +1,5 @@
 // some DOM plumbing
-import {cleanupHtml, getRestricted, setTagPermission} from "./DOMCleanup.js";
+import {cleanupHtml, getRestricted, setTagPermission, allowUnknownHtmlTags} from "./DOMCleanup.js";
 
 // insert Element position helper
 const adjacents = {
@@ -35,4 +35,5 @@ export {
   setTagPermission,
   fromHtml,
   cleanupHtml,
+  allowUnknownHtmlTags,
 };

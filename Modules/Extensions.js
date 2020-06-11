@@ -1,5 +1,5 @@
 // all extensions
-import { cleanupHtml, fromHtml, getRestricted, setTagPermission }  from "./DOM.js";
+import { allowUnknownHtmlTags, cleanupHtml, fromHtml, getRestricted, setTagPermission }  from "./DOM.js";
 import { log, debugLog, logStatus } from "./Log.js";
 
 // the allmighty iterator
@@ -101,4 +101,4 @@ const extensions = {
     },
   };
 
-export { loop, fromHtml, extensions, getRestricted, setTagPermission, log, debugLog, logStatus };
+export { loop, fromHtml, extensions, getRestricted, setTagPermission, log, debugLog, logStatus, allowUnknownHtmlTags };

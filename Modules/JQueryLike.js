@@ -1,8 +1,8 @@
-import { extensions, getRestricted, setTagPermission, fromHtml, loop, log, debugLog, logStatus  }
+import { extensions, getRestricted, setTagPermission, fromHtml, loop, log, debugLog, logStatus, allowUnknownHtmlTags  }
   from "./Extensions.js";
 
 // the prototype initializer
-const setPrototype = (ctor, extensions) => {
+const initializePrototype = (ctor, extensions) => {
   Object.entries(Object.getOwnPropertyDescriptors(Element.prototype))
     .filter( propDescriptr => propDescriptr.value instanceof Function)
     .forEach( ([key, { value }]) =>
@@ -34,8 +34,9 @@ const setPrototype = (ctor, extensions) => {
 const $ = (() => {
   function ExtendedNodeList(selectorOrHtml, root = document.body) {
     if (ExtendedNodeList.prototype.isSet === undefined) {
-      setPrototype(ExtendedNodeList, extensions);
+      initializePrototype(ExtendedNodeList, extensions);
     }
+
     this.collection = [];
 
     try {
@@ -67,7 +68,7 @@ const $ = (() => {
         return this;
       }
     } catch (err) {
-      const msg = `Caught jql selector or html error:\n${err.stack}`;
+      const msg = `Caught jql selector or html error:\n${err.stack ? err.stack : err.message}`;
       if (logStatus()) {
         log(msg);
       } else {
@@ -81,4 +82,4 @@ const $ = (() => {
   };
 })().$;
 
-export { $, debugLog, log, getRestricted, setTagPermission };
+export { $, debugLog, log, getRestricted, setTagPermission, allowUnknownHtmlTags };
