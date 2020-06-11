@@ -1,3 +1,10 @@
+// alllow or disallow unknown tags (default: false)
+let lenient = false;
+const allowUnknownHtmlTags = {
+  on: () => lenient = true,
+  off: () => lenient = false,
+};
+
 // initial set of tags and allowances
 const cleanupTagInfo = {
   a: {elem: HTMLAnchorElement, allowed: true},
@@ -15,9 +22,9 @@ const cleanupTagInfo = {
   embed: {elem: HTMLEmbedElement, allowed: false},
   fieldset: {elem: HTMLFieldSetElement, allowed: true},
   form: {elem: HTMLFormElement, allowed: false},
-  frameset: {elem: HTMLFrameSetElement, allowed: false},
   hr: {elem: HTMLHRElement, allowed: true},
   head: {elem: HTMLHeadElement, allowed: false},
+  output: {elem: 	HTMLOutputElement, allowed: true},
   iframe: {elem: HTMLIFrameElement, allowed: false},
   img: {elem: HTMLImageElement, allowed: true},
   input: {elem: HTMLInputElement, allowed: true},
@@ -54,13 +61,62 @@ const cleanupTagInfo = {
   time: {elem: HTMLTimeElement, allowed: true},
   title: {elem: HTMLTitleElement, allowed: true},
   track: {elem: HTMLTrackElement, allowed: true},
+  details: {elem: HTMLDetailsElement, allowed: true},
+  dialog: {elem: HTMLDialogElement, allowed: true},
   ul: {elem: HTMLUListElement, allowed: true},
-  video: {elem: HTMLVideoElement, allowed: false}
+  video: {elem: HTMLVideoElement, allowed: false},
+  del: {elem: HTMLModElement, allowed: true},
+  ins: {elem: HTMLModElement, allowed: true},
+  slot: {elem: HTMLSlotElement, allowed: false},
+  blockquote: {elem: HTMLQuoteElement, allowed: true},
+  summary: {name: "summary", allowed: true},
+  main: {name: "main", allowed: true},
+  address: {name: "address", allowed: true},
+  colgroup:  {name: "colgroup", allowed: true},
+  tbody:  {name: "tbody", allowed: true},
+  tfoot:  {name: "tfoot", allowed: true},
+  th:  {name: "th", allowed: true},
+  dd:  {name: "dd", allowed: true},
+  dt:  {name: "dt", allowed: true},
+  figcaption:  {name: "figcaption", allowed: true},
+  figure:  {name: "figure", allowed: true},
+  i:  {name: "i", allowed: true},
+  b:  {name: "b", allowed: true},
+  code: {name: "code", allowed: true},
+  h1:  {name: "h1", allowed: true},
+  h2: {name: "h2", allowed: true},
+  h3: {name: "h3", allowed: true},
+  h4: {name: "h4", allowed: true},
+  abbr: {name: "abbr", allowed: true},
+  bdo: {name: "bdo", allowed: true},
+  dfn: {name: "dfn", allowed: true},
+  em:  {name: "em", allowed: true},
+  kbd:  {name: "kbd", allowed: true},
+  mark:  {name: "mark", allowed: true},
+  q:  {name: "1", allowed: true},
+  rb:  {name: "rb", allowed: true},
+  rp:  {name: "rp", allowed: true},
+  rt:  {name: "rt", allowed: true},
+  ruby:  {name: "ruby", allowed: true},
+  s:  {name: "s", allowed: true},
+  samp:  {name: "samp", allowed: true},
+  small:  {name: "small", allowed: true},
+  strong:  {name: "strong", allowed: true},
+  sup:  {name: "sup", allowed: true},
+  sub:  {name: "sub", allowed: true},
+  u:  {name: "u", allowed: true},
+  var:  {name: "var", allowed: true},
+  wbr:  {name: "wbr", allowed: true},
+  noscript:  {name: "noscript", allowed: true},
+  isAllowed(elem) {
+    const tagInSet = Object.values(this)
+      .find(tag => tag.elem && elem instanceof tag.elem ||
+        (elem.nodeName || "").toLowerCase() === tag.name);
+    return (tagInSet && tagInSet.allowed) ||
+       lenient && !tagInSet;
+  }
 };
-// browser compat
-if (window["HTMLContentElement"]) {
-  cleanupTagInfo.content = {elem: window["HTMLContentElement"], allowed: false};
-}
+
 // regex not allowed attributes
 let notAllowedAttributes = /(^action|allow|contenteditable|data$)|(^on)|download/i;
 
@@ -74,14 +130,13 @@ const cleanupHtml = elem => {
       [...child.attributes]
         .forEach(attr => {
           if (notAllowedAttributes.test(attr.name.trim())) {
-            console.info(`HTML cleanup: attribute [${attr.name}] not allowed: removed`);
+            console.info(`DOM cleanup message: attribute [${attr.name}] removed`);
             child.removeAttribute(attr.name);
           }
         });
-      const tagNotAllowed = Object.values(cleanupTagInfo)
-        .find( value => !value.allowed && child instanceof value.elem);
-      if (tagNotAllowed) {
-        console.info(`HTML cleanup: tag [${tagNotAllowed.elem.name}] not allowed: removed`);
+      const tagInSet = cleanupTagInfo.isAllowed(child);
+      if (!tagInSet) {
+        console.info(`DOM cleanup message: tag [${child.nodeName.toLowerCase()}] removed`);
         child.parentNode.removeChild(child);
       }
     }
@@ -89,7 +144,7 @@ const cleanupHtml = elem => {
   return el2Clean.firstChild;
 };
 
-// get restricted tag
+// get restricted tags
 // optionally emphasize a tag in the reporting [emphasizeTag]
 const emphasize = str => `***${str}***`;
 const getRestricted = emphasizeTag =>
@@ -118,4 +173,4 @@ const getOrSetrestrictedAttributes = attrsRegExp => {
   return notAllowedAttributes;
 };
 
-export {cleanupHtml, getRestricted, setTagPermission, getOrSetrestrictedAttributes};
+export { cleanupHtml, getRestricted, setTagPermission, getOrSetrestrictedAttributes, allowUnknownHtmlTags };
