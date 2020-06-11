@@ -2,11 +2,12 @@
 // for production you'll probably only need $
 // -------------------------------------------
 
-import { $, log, debugLog, setTagPermission, getRestricted } from "./JQueryLike.js";
+import { $, log, debugLog, setTagPermission, getRestricted, allowUnknownHtmlTags } from "./JQueryLike.js";
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
-  debugLog.off;
+  debugLog.off();
+
   console.clear();
 
   $( [
@@ -63,8 +64,15 @@ export const main = () => {
     border: "1px solid #777"
   });
 
-    // currently not checking for invalid tags
-  $( `<XStyle>&lt;XStyle> is not a valid tag but it will not throw</XStyle>` )
+ // allow this temporarily
+  allowUnknownHtmlTags.on();
+  $( `<XStyle>&lt;XStyle> is not a valid tag but it will render, 
+    because <code>allowUnknownHtmlTags.on</code> was just called</XStyle>` )
+    .attr({ style: "color: orange" });
+
+  // now disallow again
+  allowUnknownHtmlTags.off();
+  $( `<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>` )
     .attr({ style: "color: orange" });
 
   /** this will throw but the error is caught (see console) */
