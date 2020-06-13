@@ -96,16 +96,16 @@ const extensions = {
       // for example. Use rgba if you want to toggle opacity
       // for a color too
       Object.entries(styleValues).forEach( ([key, value]) => {
-          if (/color/i.test(key)) {
-            if (value.startsWith(`#`)) {
-              el.style[key] = el.style[key] === hex2RGBA(value) ||
-              el.style[key] === hex2Full(value) ? "" : value;
-            } else if (/^rgb/i.test(value.trim())) {
-              value = value.replace(/(,|,\s{2,})(\w)/g,
-                        (f, ws, wordBoundaryAfterComma) =>
-                          `, ${wordBoundaryAfterComma}`);
-            }
+          if (value instanceof Function) {
+            value = value(el);
           }
+
+          if (/color/i.test(key)) {
+            value = value.startsWith(`#`)
+              ? hex2RGBA(value)
+              : value.replace(/(,|,\s{2,})(\w)/g, (...args) => `, ${args[2]}`);
+          }
+
           el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
         }),
     each: {

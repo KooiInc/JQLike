@@ -20,16 +20,11 @@ export const main = () => {
     const origin = evt.target;
 
     if (origin.nodeName === "BUTTON") {
-      $("[data-colorchange]").each( elem => {
-          $(elem).toggleStyleFragments( {
-            color: elem.dataset.colorchange || "#6666ff",
-            backgroundColor: "rgba(255,255,0,0.5)",
-            fontWeight: "700"} );
-          // set for next toggle if the data attribute had no or hex value
-          if (!elem.dataset.colorchange || elem.dataset.colorchange.startsWith("#")) {
-            elem.dataset.colorchange = elem.style.color;
-          }
-        } );
+      $("[data-colorchange]").toggleStyleFragments({
+        color: el => el.dataset.colorchange || "#6666ff",
+        backgroundColor: "rgba(255,255,0,0.5)",
+        fontWeight: "700"
+      });
     }
   };
 
@@ -47,7 +42,7 @@ export const main = () => {
     .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
-  $(`<button>Toggle color for *[data-colorchange]</button>`);
+  $(`<button>toggleStyleFragments for *[data-colorchange]</button>`);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
