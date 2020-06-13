@@ -10,6 +10,20 @@ const loop = (extCollection, callback) => {
   return extCollection;
 };
 
+// style color toggling helpers
+const hex2Full = hex => {
+  hex = (hex.trim().startsWith("#") ? hex.slice(1) : hex).trim();
+  return hex.length === 3 ? [...hex].map(v => v + v).join("") : hex;
+};
+const hex2RGBA = (hex, opacity = 100) => {
+  hex = hex2Full(hex.slice(1));
+  const op = opacity % 100 !== 0;
+  return `rgb${op ? "a" : ""}(${
+    parseInt(hex.slice(0, 2), 16)}, ${
+    parseInt(hex.slice(2, 4), 16)}, ${
+    parseInt(hex.slice(-2), 16)}${op ? `, ${opacity/100}` : ""})`;
+};
+
 // noinspection JSUnusedGlobalSymbols
 const extensions = {
     toggleClass: (el, className) => el.classList.toggle(className),
@@ -76,6 +90,24 @@ const extensions = {
       el.hasAttribute(name)
         ? el.removeAttribute(name)
         : el.setAttribute(name, value),
+    // this may fail, because browsers may reformat
+    // style values in their own way. See the color stuf
+    // for example. Use rgba if you want to toggle opacity
+    // for a color too
+    toggleStyleFragments: (el, styleValues) =>
+      Object.entries(styleValues).forEach( ([key, value]) => {
+          if (/color/i.test(key)) {
+            if (value.startsWith(`#`)) {
+              el.style[key] = el.style[key] === hex2RGBA(value) ||
+              el.style[key] === hex2Full(value) ? "" : value;
+            } else if (/^rgb/i.test(value.trim())) {
+              value = value.replace(/(,|,\s{2,})(\w)/g, ", $2");
+              el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
+            }
+          } else {
+            el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
+          }
+        }),
     each: {
       fn: loop
     },

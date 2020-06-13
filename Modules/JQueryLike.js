@@ -44,6 +44,9 @@ const $ = (() => {
     }
 
     this.collection = [];
+    const cleanupCollection = () => this.collection.forEach(elem =>
+      !elem.dataset.elementInvalid && element2DOM(elem, root, position)
+    );
 
     try {
       const isArray = Array.isArray(selectorOrHtml);
@@ -60,13 +63,12 @@ const $ = (() => {
           if (isArray) {
             selectorOrHtml.forEach( html =>
                this.collection.push(createElementFromHtmlString(html, root)) );
+
           } else {
             this.collection = [createElementFromHtmlString(selectorOrHtml, root)];
           }
           // remove erroneous elems
-          this.collection.forEach(elem =>
-            !elem.dataset.elementInvalid && element2DOM(elem, root, position)
-          );
+          cleanupCollection();
 
           if (logStatus()) {
             log(`created element: *clean: [${this.collection[0].outerHTML}]`);

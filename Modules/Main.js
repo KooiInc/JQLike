@@ -1,7 +1,7 @@
 import { debugLog, log } from "./Log.js";
 import $ from "./JQueryLike.js";
 import { setTagPermission, getRestricted, allowUnknownHtmlTags, } from "./DOMCleanup.js";
-
+import { insertPositions } from "./DOM.js" ;
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
@@ -11,7 +11,7 @@ export const main = () => {
 
   $( [
       `<h2>Testing a JQ-alike html helper library</h2>`,
-      `<p>
+      `<p data-starttext>
           Some jQuery-stuff is too good to loose. So here's a jQuery lite attempt.
           <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
         </p>`] );
@@ -20,10 +20,18 @@ export const main = () => {
     const origin = evt.target;
 
     if (origin.nodeName === "BUTTON") {
-      $("[data-test]").each( elem =>
-         $(elem).toggleAttr("style", `color: ${elem.dataset.colorchange}`));
+      $("[data-colorchange]").each( elem => {
+          $(elem).toggleStyleFragments( {
+            color: elem.dataset.colorchange || "#c0c0c0",
+            backgroundColor: "rgba(255,255,0,0.5)" } );
+          // set for next toggle if the data attribute had no or hex value
+          if (!elem.dataset.colorchange || elem.dataset.colorchange.startsWith("#")) {
+            elem.dataset.colorchange = elem.style.color;
+          }
+        } );
     }
   };
+
   document.addEventListener("click", uselessTestHandler);
 
   /** add some elements to the body */
@@ -38,7 +46,7 @@ export const main = () => {
     .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
-  $(`<button>Toggle color for div[data-colorchange]</button>`);
+  $(`<button>Toggle color for *[data-colorchange]</button>`);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
@@ -47,20 +55,23 @@ export const main = () => {
         <span>Hi, I am an added paragraph from html string.</span>
         <!--there should not be a script tag after this -->
         <script>alert('HI?')></script>
-        <span style="display:block">Html is cleaned: check log</span>
-      </p>`).css({
-    color: "red",
-    backgroundColor: "#EEE",
-    padding: "4px",
-    marginTop: "1.5rem",
-    maxWidth: "inherit",
-    border: "1px solid #777"
-  });
+        <span style="display:block" data-colorchange>Html is cleaned: check log</span>
+      </p>`)
+      .css({
+        color: "red",
+        backgroundColor: "#EEE",
+        padding: "4px",
+        marginTop: "1.5rem",
+        maxWidth: "inherit",
+        border: "1px solid #777"
+      });
 
  // allow this temporarily
   allowUnknownHtmlTags.on();
   $( `<XStyle>&lt;XStyle> is not a valid tag but it will render, 
-    because <code>allowUnknownHtmlTags.on</code> was just called</XStyle>` )
+    because <code>allowUnknownHtmlTags.on</code> was just called.
+    It is inserted @ after the header subtext
+    </XStyle>`, document.querySelector("[data-starttext]"), insertPositions.AfterEnd )
     .attr({ style: "color: orange" });
 
   // now disallow again
@@ -68,8 +79,8 @@ export const main = () => {
   // todo: array of values
   $( [`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
     `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
-        was just called</div>`,
-    ]).css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
+        was just called. This element is inserted afther the previous &lt;xstyle&gt; element</div>`,
+    ], document.querySelector("xstyle"), insertPositions.AfterEnd).css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
 
   /** this will throw but the error is caught (see console) */
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
@@ -91,7 +102,7 @@ export const main = () => {
   /** reallow <pre> */
   setTagPermission("pre", true);
   $(
-    `<div>
+    `<div data-colorchange="#c0c0FF">
       notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
       <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`
