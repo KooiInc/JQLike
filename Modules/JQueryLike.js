@@ -1,5 +1,11 @@
-import { extensions, getRestricted, setTagPermission, fromHtml, loop, log, debugLog, logStatus, allowUnknownHtmlTags  }
-  from "./Extensions.js";
+import {log, logStatus} from "./Log.js";
+import {
+  createElementFromHtmlString,
+  element2DOM,
+  insertPositions,
+} from "./DOM.js";
+
+import { extensions, loop } from "./Extensions.js";
 
 // the prototype initializer
 const initializePrototype = (ctor, extensions) => {
@@ -32,7 +38,7 @@ const initializePrototype = (ctor, extensions) => {
 
 // -------------------------------------------------------------------- //
 const $ = (() => {
-  function ExtendedNodeList(selectorOrHtml, root = document.body) {
+  function ExtendedNodeList(selectorOrHtml, root = document.body, position = insertPositions.BeforeEnd ) {
     if (ExtendedNodeList.prototype.isSet === undefined) {
       initializePrototype(ExtendedNodeList, extensions);
     }
@@ -40,22 +46,27 @@ const $ = (() => {
     this.collection = [];
 
     try {
+      const isArray = Array.isArray(selectorOrHtml);
       if (selectorOrHtml) {
         if (selectorOrHtml instanceof HTMLElement) {
           this.collection = [selectorOrHtml];
-        } else if ( selectorOrHtml.constructor === Array ||
-          `${selectorOrHtml}`.trim().startsWith("<") ) {
+        } else if ( isArray ||
+            `${selectorOrHtml}`.trim().startsWith("<") ) {
 
           if (logStatus()) {
             log(`trying to create ... [${selectorOrHtml}]`);
           }
 
-          if (Array.isArray(selectorOrHtml)) {
+          if (isArray) {
             selectorOrHtml.forEach( html =>
-               this.collection.push(fromHtml(html, root)) );
+               this.collection.push(createElementFromHtmlString(html, root)) );
           } else {
-            this.collection = [fromHtml(selectorOrHtml, root)];
+            this.collection = [createElementFromHtmlString(selectorOrHtml, root)];
           }
+          // remove erroneous elems
+          this.collection.forEach(elem =>
+            !elem.dataset.elementInvalid && element2DOM(elem, root, position)
+          );
 
           if (logStatus()) {
             log(`created element: *clean: [${this.collection[0].outerHTML}]`);
@@ -65,6 +76,7 @@ const $ = (() => {
         } else {
           log(`No css selector, assign empty collection`);
         }
+
         return this;
       }
     } catch (err) {
@@ -82,4 +94,4 @@ const $ = (() => {
   };
 })().$;
 
-export { $, debugLog, log, getRestricted, setTagPermission, allowUnknownHtmlTags };
+export default $;

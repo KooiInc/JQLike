@@ -1,10 +1,10 @@
-import { fromHtml } from "./DOM.js";
+import { createElementFromHtmlString } from "./DOM.js";
 
 let useLogging = false;
 const debugLog = { on: () => useLogging = true, off: () => useLogging = false, };
 const log = txt => {
   if (!document.querySelector("#jql_logger")) {
-    const logBlock = fromHtml(`<pre id="jql_logger"></pre>`, document.body);
+    const logBlock = createElementFromHtmlString(`<pre id="jql_logger"></pre>`, document.body);
 
     Object.entries( {
          maxHeight: "200px",

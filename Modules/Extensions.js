@@ -1,6 +1,5 @@
 // all extensions
-import { allowUnknownHtmlTags, cleanupHtml, fromHtml, getRestricted, setTagPermission }  from "./DOM.js";
-import { log, debugLog, logStatus } from "./Log.js";
+import { cleanupHtml } from "./DOM.js";
 
 // the allmighty iterator
 // noinspection JSUnusedGlobalSymbols
@@ -78,14 +77,13 @@ const extensions = {
         ? el.removeAttribute(name)
         : el.setAttribute(name, value),
     each: {
-      fn: (collection, callback) => collection.forEach(collection, callback)
+      fn: loop
     },
     single: {
       fn: (extCollection, index = 0) => {
         if (extCollection.collection.length > 0 && index < extCollection.collection.length) {
-          const nwCollection = new extCollection
+          return new extCollection
             .constructor(extCollection.collection[index]);
-          return nwCollection;
         } else {
           return extCollection;
         }
@@ -101,4 +99,7 @@ const extensions = {
     },
   };
 
-export { loop, fromHtml, extensions, getRestricted, setTagPermission, log, debugLog, logStatus, allowUnknownHtmlTags };
+export {
+  loop,
+  extensions,
+};

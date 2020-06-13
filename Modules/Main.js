@@ -1,8 +1,7 @@
-// -------------------------------------------
-// for production you'll probably only need $
-// -------------------------------------------
+import { debugLog, log } from "./Log.js";
+import $ from "./JQueryLike.js";
+import { setTagPermission, getRestricted, allowUnknownHtmlTags, } from "./DOMCleanup.js";
 
-import { $, log, debugLog, setTagPermission, getRestricted, allowUnknownHtmlTags } from "./JQueryLike.js";
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
@@ -17,16 +16,12 @@ export const main = () => {
           <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
         </p>`] );
 
-  const colors = {
-    Red: "Green",
-    Green: "Red"
-  };
   const uselessTestHandler = evt => {
     const origin = evt.target;
 
-    if (origin.dataset.colorshift) {
-      $("[data-test]").attr({ style: `color:${origin.dataset.colorshift}` });
-      origin.dataset.colorshift = colors[origin.dataset.colorshift];
+    if (origin.nodeName === "BUTTON") {
+      $("[data-test]").each( elem =>
+         $(elem).toggleAttr("style", `color: ${elem.dataset.colorchange}`));
     }
   };
   document.addEventListener("click", uselessTestHandler);
@@ -34,18 +29,16 @@ export const main = () => {
   /** add some elements to the body */
   $(`<div>Hi, I am test. Check the color button</div>`)
     .addClass("testxyz")
-    .attr({ data: { test: "test!" } });
+    .attr({ data: { test: "test!", colorchange: "blue" } });
 
   $(`<div class="testxyz">Me too, but will not participate in colorization`);
 
   $(`<div>Also one for the color button!`)
     .addClass("testxyz")
-    .attr({ data: { test: "test!", somethingElse: "not important" } });
-
-  $(`[data-test]`).attr({ style: "color:green" });
+    .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
-  $(`<button data-colorshift= "Red"></button>`);
+  $(`<button>Toggle color for div[data-colorchange]</button>`);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
@@ -72,8 +65,11 @@ export const main = () => {
 
   // now disallow again
   allowUnknownHtmlTags.off();
-  $( `<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>` )
-    .attr({ style: "color: orange" });
+  // todo: array of values
+  $( [`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
+    `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
+        was just called</div>`,
+    ]).css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
 
   /** this will throw but the error is caught (see console) */
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
