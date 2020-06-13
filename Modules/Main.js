@@ -22,8 +22,9 @@ export const main = () => {
     if (origin.nodeName === "BUTTON") {
       $("[data-colorchange]").each( elem => {
           $(elem).toggleStyleFragments( {
-            color: elem.dataset.colorchange || "#c0c0c0",
-            backgroundColor: "rgba(255,255,0,0.5)" } );
+            color: elem.dataset.colorchange || "#6666ff",
+            backgroundColor: "rgba(255,255,0,0.5)",
+            fontWeight: "700"} );
           // set for next toggle if the data attribute had no or hex value
           if (!elem.dataset.colorchange || elem.dataset.colorchange.startsWith("#")) {
             elem.dataset.colorchange = elem.style.color;
@@ -80,7 +81,8 @@ export const main = () => {
   $( [`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
     `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
         was just called. This element is inserted afther the previous &lt;xstyle&gt; element</div>`,
-    ], document.querySelector("xstyle"), insertPositions.AfterEnd).css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
+    ], document.querySelector("xstyle"), insertPositions.AfterEnd)
+  .css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
 
   /** this will throw but the error is caught (see console) */
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
@@ -102,7 +104,7 @@ export const main = () => {
   /** reallow <pre> */
   setTagPermission("pre", true);
   $(
-    `<div data-colorchange="#c0c0FF">
+    `<div data-colorchange="#cc3300">
       notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
       <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`

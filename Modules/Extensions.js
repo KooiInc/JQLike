@@ -90,23 +90,23 @@ const extensions = {
       el.hasAttribute(name)
         ? el.removeAttribute(name)
         : el.setAttribute(name, value),
-    // this may fail, because browsers may reformat
-    // style values in their own way. See the color stuf
-    // for example. Use rgba if you want to toggle opacity
-    // for a color too
     toggleStyleFragments: (el, styleValues) =>
+      // Note: this may fail, because browsers may reformat
+      // style values in their own way. See the color stuf
+      // for example. Use rgba if you want to toggle opacity
+      // for a color too
       Object.entries(styleValues).forEach( ([key, value]) => {
           if (/color/i.test(key)) {
             if (value.startsWith(`#`)) {
               el.style[key] = el.style[key] === hex2RGBA(value) ||
               el.style[key] === hex2Full(value) ? "" : value;
             } else if (/^rgb/i.test(value.trim())) {
-              value = value.replace(/(,|,\s{2,})(\w)/g, ", $2");
-              el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
+              value = value.replace(/(,|,\s{2,})(\w)/g,
+                        (f, ws, wordBoundaryAfterComma) =>
+                          `, ${wordBoundaryAfterComma}`);
             }
-          } else {
-            el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
           }
+          el.style[key] = `${el.style[key]}` === `${value}` ? "" : value;
         }),
     each: {
       fn: loop
