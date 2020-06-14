@@ -114,8 +114,7 @@ const extensions = {
     single: {
       fn: (extCollection, index = 0) => {
         if (extCollection.collection.length > 0 && index < extCollection.collection.length) {
-          return new extCollection
-            .constructor(extCollection.collection[index]);
+          return new extCollection.constructor(extCollection.collection[index]);
         } else {
           return extCollection;
         }
@@ -127,6 +126,29 @@ const extensions = {
           return extCollection.collection[0];
         }
         return undefined;
+      }
+    },
+    // handlers always use event delegation
+    on: {
+      fn: (extCollection, type, selectorOrCb, cb) => {
+        document.addEventListener( type, evt => {
+          if (selectorOrCb instanceof Function) {
+            const target = extCollection.collection.find(el => evt.target === el);
+            if (target) {
+              selectorOrCb(evt);
+            }
+          } else {
+            const targetPerSelector = extCollection.collection
+              .find( elem =>
+                [...elem.querySelectorAll(selectorOrCb)]
+                  .find(el => el === evt.target))
+            if (targetPerSelector) {
+              cb(evt);
+            }
+          }
+        } );
+
+        return extCollection;
       }
     },
   };
