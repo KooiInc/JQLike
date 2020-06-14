@@ -22,7 +22,7 @@ export const main = () => {
     if (origin.nodeName === "BUTTON") {
       $("[data-colorchange]").toggleStyleFragments({
         color: el => el.dataset.colorchange || "#6666ff",
-        backgroundColor: "rgba(255,255,0,0.5)",
+        backgroundColor: "rgba(255,255,0,0.25)",
         fontWeight: "700"
       });
     }
