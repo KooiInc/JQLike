@@ -83,7 +83,7 @@ const extensions = {
             requestAnimationFrame( function() {
               if (el.parentNode) {
                 el.parentNode.replaceChild(elNw, el);
-                // MUST be replaces (for event handling)
+                // MUST be replaced (for event handling)
                 extCollection.collection[i] = elNw;
               }
             } );
