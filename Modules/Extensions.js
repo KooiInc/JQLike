@@ -1,5 +1,5 @@
 // all extensions
-import { cleanupHtml } from "./DOM.js";
+import { cleanupHtml, element2DOM, insertPositions } from "./DOM.js";
 
 // the allmighty iterator
 // noinspection JSUnusedGlobalSymbols
@@ -72,14 +72,20 @@ const extensions = {
             .reduce((acc, el) => [...acc, el.innerHTML], []).join(" # ");
         }
         extCollection.collection = [...extCollection.collection]
-          .reduce((acc, el) => {
+          .reduce((acc, el, i) => {
+            let elNw = el.cloneNode(true);
             if (append) {
-              el.innerHTML += htmlValue;
+              elNw.innerHTML += htmlValue;
             } else {
-              el.innerHTML = htmlValue;
+              elNw.innerHTML = htmlValue;
             }
+            elNw = cleanupHtml(elNw);
             requestAnimationFrame( function() {
-              el.parentNode && el.parentNode.replaceChild(cleanupHtml(el), el);
+              if (el.parentNode) {
+                el.parentNode.replaceChild(elNw, el);
+                // MUST be replaces (for event handling)
+                extCollection.collection[i] = elNw;
+              }
             } );
             return [...acc, el];
           }, []);
@@ -133,18 +139,16 @@ const extensions = {
       fn: (extCollection, type, selectorOrCb, cb) => {
         document.addEventListener( type, evt => {
           if (selectorOrCb instanceof Function) {
-            const target = extCollection.collection.find(el => evt.target === el);
-            if (target) {
-              selectorOrCb(evt);
-            }
+            const target = extCollection.collection.find(el => {
+              return evt.target.isSameNode(el);
+            });
+            if (target) { selectorOrCb(evt, extCollection); }
           } else {
             const targetPerSelector = extCollection.collection
               .find( elem =>
                 [...elem.querySelectorAll(selectorOrCb)]
-                  .find(el => el === evt.target))
-            if (targetPerSelector) {
-              cb(evt);
-            }
+                  .find(el => el.isSameNode(evt.target)))
+            if (targetPerSelector) { cb(evt, extCollection);  }
           }
         } );
 

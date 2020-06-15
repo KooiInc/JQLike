@@ -28,8 +28,6 @@ export const main = () => {
     }
   };
 
-  document.addEventListener("click", uselessTestHandler);
-
   /** add some elements to the body */
   $(`<div>Hi, I am test. Check the color button</div>`)
     .addClass("testxyz")
@@ -42,7 +40,8 @@ export const main = () => {
     .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
-  $(`<button>toggleStyleFragments for *[data-colorchange]</button>`);
+  $(`<button>toggleStyleFragments for *[data-colorchange]</button>`)
+      .on("click", uselessTestHandler);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
@@ -110,14 +109,21 @@ export const main = () => {
       notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
       <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`
-  );
+  )
+  .on("click", "*", () => alert("hi there! Works?"))
+  .css({cursor: "pointer"});
 
   $(`<div>
       <code>
         $("&lt;div/&gt;").html("test html() extension function for a newly created element from html string")
       </code> result =&gt;
-    </div>`)
-  $(`<div/>`).html(`test html() extension function for a newly created element from html string`);
+    </div>`);
+
+  $(`<div/>`)
+    .css({cursor: "pointer"})
+    .html(`test html() extension function for a newly created element from html string`)
+    .on("click", (evt, self) => self.toggleStyleFragments({color: "red"}));
+
 
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
     .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
