@@ -44,8 +44,8 @@ const $ = (() => {
     }
 
     this.collection = [];
-    const cleanupCollection = () => this.collection.forEach(elem =>
-      !elem.dataset.elementInvalid && element2DOM(elem, root, position)
+    const cleanupCollection = () => this.collection = this.collection.reduce( (acc, elem) =>
+      !elem.dataset.elementInvalid && [...acc, element2DOM(elem, root, position)] || acc, []
     );
 
     try {
