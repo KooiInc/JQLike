@@ -1,12 +1,11 @@
 import { debugLog, log } from "./Log.js";
 import $ from "./JQueryLike.js";
 import { setTagPermission, getRestricted, allowUnknownHtmlTags, } from "./DOMCleanup.js";
-import { insertPositions } from "./DOM.js" ;
+import { insertPositions, closestSibling } from "./DOM.js" ;
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
   debugLog.off();
-
   console.clear();
 
   $( [
@@ -40,12 +39,21 @@ export const main = () => {
     .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
-  $(`<button>toggleStyleFragments for *[data-colorchange]</button>`)
-      .on("click", uselessTestHandler);
+  $(`<div><button>toggleStyleFragments for *[data-colorchange]</button></div>`)
+      .on("click", "button", uselessTestHandler, true);
 
-  $(`<img src="https://picsum.photos/400/200" alt="click for new image ;)"/>`)
-    .css({display: "block", margin: "0.5rem 0", cursor: "pointer"})
-    .on("click", evt => evt.target.src = "https://picsum.photos/400/200");
+  const imgChange = evt => {
+    const img = closestSibling(evt.target, "img");
+    img.src = "";
+    img.src = "https://picsum.photos/400/200";
+  };
+
+  $(`<div>
+       <img class="randomImg" src="https://picsum.photos/400/200"></img>
+       <div class="caption">Just click if you don't like the image</div>
+     </div>`)
+    .css({display: "inline-block", margin: "0.5rem 0", cursor: "pointer", clear: "both"})
+    .on("click", ".caption, img", imgChange);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 

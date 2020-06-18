@@ -8,6 +8,8 @@ const adjacents = {
   BeforeEnd: "beforeend",     // after last child
   AfterEnd: "afterend" };     // after element
 
+const closestSibling = (elem, selector) => elem.parentNode.querySelector(selector);
+
 // create DOM object from html string
 const htmlToVirtualElement = htmlString => {
   const placeholder = document.createElement("div");
@@ -48,4 +50,5 @@ export {
   cleanupHtml,
   allowUnknownHtmlTags,
   adjacents as insertPositions,
+  closestSibling,
 };

@@ -21,3 +21,21 @@ code {
 [data-test] {
   color: green;
 }
+
+.caption {
+  border: 1px solid #CCC;
+  padding: 5px;
+  display: compact;
+  text-align: center;
+}
+
+img.randomImg {
+  min-width: 400px;
+  min-height: 200px;
+  background-image: url(../img/waiting.svg);
+  background-position: center center;
+  background-size: 50px 50px;
+  background-repeat: no-repeat;
+  background-color: #eee;
+}
+

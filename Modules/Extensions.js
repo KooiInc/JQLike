@@ -142,13 +142,19 @@ const extensions = {
             const target = extCollection.collection.find(el => {
               return evt.target.isSameNode(el);
             });
-            if (target) { selectorOrCb(evt, extCollection); }
+            if (target) {
+              selectorOrCb(evt, extCollection);
+              evt.stopImmediatePropagation();
+            }
           } else {
             const targetPerSelector = extCollection.collection
               .find( elem => (includeParent && elem === evt.target) ||
                 [...elem.querySelectorAll(selectorOrCb)]
-                  .find(el => el.isSameNode(evt.target)))
-            if (targetPerSelector) { cb(evt, extCollection);  }
+                  .find(el => el.isSameNode(evt.target)));
+            if (targetPerSelector) {
+              cb(evt, extCollection);
+              evt.stopImmediatePropagation();
+            }
           }
         } );
 
