@@ -43,6 +43,10 @@ export const main = () => {
   $(`<button>toggleStyleFragments for *[data-colorchange]</button>`)
       .on("click", uselessTestHandler);
 
+  $(`<img src="https://picsum.photos/400/200" alt="click for new image ;)"/>`)
+    .css({display: "block", margin: "0.5rem 0", cursor: "pointer"})
+    .on("click", evt => evt.target.src = "https://picsum.photos/400/200");
+
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
         onclick="alert('hi, this will be removed!')"
@@ -59,7 +63,7 @@ export const main = () => {
         color: "red",
         backgroundColor: "#EEE",
         padding: "4px",
-        marginTop: "1.5rem",
+        marginTop: "1rem",
         maxWidth: "inherit",
         border: "1px solid #777",
         cursor: "pointer"
@@ -110,7 +114,7 @@ export const main = () => {
       <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`
   )
-  .on("click", "*", () => alert("hi there! Works?"))
+  .on("click", "*", () => alert("hi there! Works?"), true)
   .css({cursor: "pointer"});
 
   $(`<div>
