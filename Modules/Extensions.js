@@ -136,7 +136,7 @@ const extensions = {
     },
     // handlers always use event delegation
     on: {
-      fn: (extCollection, type, selectorOrCb, cb) => {
+      fn: (extCollection, type, selectorOrCb, cb, includeParent = false) => {
         document.addEventListener( type, evt => {
           if (selectorOrCb instanceof Function) {
             const target = extCollection.collection.find(el => {
@@ -145,7 +145,7 @@ const extensions = {
             if (target) { selectorOrCb(evt, extCollection); }
           } else {
             const targetPerSelector = extCollection.collection
-              .find( elem =>
+              .find( elem => (includeParent && elem === evt.target) ||
                 [...elem.querySelectorAll(selectorOrCb)]
                   .find(el => el.isSameNode(evt.target)))
             if (targetPerSelector) { cb(evt, extCollection);  }
