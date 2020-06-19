@@ -29,7 +29,7 @@ const { addHandler } = (() => {
   // For every eventType there will be exactly one
   // handler.
   // The handler iterates over the handler functions
-  // created with the factory [handlerFn].
+  // created with the factory function [handlerFn].
   let handlers = {};
   const metaHandler = evt => {
     const handlersForType = handlers[evt.type];
@@ -48,7 +48,7 @@ const { addHandler } = (() => {
             [...elem.querySelectorAll(selectr)]
               .find(el => el.isSameNode(origin))));
   };
-  const handlerFn = (extCollection, selectr, callback, includeParent) => {
+  const handlerFnFactory = (extCollection, selectr, callback, includeParent) => {
     return evt => {
       const target = getTarget(selectr, extCollection, evt.target, includeParent);
       if (target) {
@@ -66,7 +66,7 @@ const { addHandler } = (() => {
       if (!Object.keys(handlers).find(t => t === type)) {
         document.addEventListener(type, metaHandler);
       }
-      const fn = handlerFn(extCollection, selectorOrCb, callback, includeParent);
+      const fn = handlerFnFactory(extCollection, selectorOrCb, callback, includeParent);
       handlers = handlers[type]
         ? { ...handlers, [type]: [...handlers[type], fn] }
         : { ...handlers, [type]: [fn] };
