@@ -24,6 +24,57 @@ const hex2RGBA = (hex, opacity = 100) => {
     parseInt(hex.slice(-2), 16)}${op ? `, ${opacity/100}` : ""})`;
 };
 
+const { addHandler } = (() => {
+  // all handlers use event delegation.
+  // For every eventType there will be exactly one
+  // handler.
+  // The handler iterates over the handler functions
+  // created with the factory [handlerFn].
+  let handlers = {};
+  const metaHandler = evt => {
+    const handlersForType = handlers[evt.type];
+    for (let i = 0; i < handlersForType.length; i += 1) {
+      if (handlersForType[i](evt)) {
+        break;
+      }
+    }
+  };
+  const getTarget = (selectr, extCollection, origin, includeParent) => {
+    return (selectr instanceof Function)
+    ? extCollection.collection.find(el => el.isSameNode(origin))
+    : extCollection.collection
+        .find(elem =>
+          (includeParent && elem.isSameNode(origin) ||
+            [...elem.querySelectorAll(selectr)]
+              .find(el => el.isSameNode(origin))));
+  };
+  const handlerFn = (extCollection, selectr, callback, includeParent) => {
+    return evt => {
+      const target = getTarget(selectr, extCollection, evt.target, includeParent);
+      if (target) {
+        selectr instanceof Function
+          ? selectr(evt, extCollection)
+          : callback(evt, extCollection);
+        return true;
+      }
+      return false;
+    }
+  };
+
+  return {
+    addHandler: (extCollection, type, selectorOrCb, callback, includeParent) => {
+      if (!Object.keys(handlers).find(t => t === type)) {
+        document.addEventListener(type, metaHandler);
+      }
+      const fn = handlerFn(extCollection, selectorOrCb, callback, includeParent);
+      handlers = handlers[type]
+        ? { ...handlers, [type]: [...handlers[type], fn] }
+        : { ...handlers, [type]: [fn] };
+    }
+  };
+})();
+
+
 // noinspection JSUnusedGlobalSymbols
 const extensions = {
     toggleClass: (el, className) => el.classList.toggle(className),
@@ -136,28 +187,8 @@ const extensions = {
     },
     // handlers always use event delegation
     on: {
-      fn: (extCollection, type, selectorOrCb, cb, includeParent = false) => {
-        document.addEventListener( type, evt => {
-          if (selectorOrCb instanceof Function) {
-            const target = extCollection.collection.find(el => {
-              return evt.target.isSameNode(el);
-            });
-            if (target) {
-              selectorOrCb(evt, extCollection);
-              evt.stopImmediatePropagation();
-            }
-          } else {
-            const targetPerSelector = extCollection.collection
-              .find( elem => (includeParent && elem === evt.target) ||
-                [...elem.querySelectorAll(selectorOrCb)]
-                  .find(el => el.isSameNode(evt.target)));
-            if (targetPerSelector) {
-              cb(evt, extCollection);
-              evt.stopImmediatePropagation();
-            }
-          }
-        } );
-
+      fn: (extCollection, type, selectorOrCb, callback, includeParent = false) => {
+        addHandler(extCollection, type, selectorOrCb, callback, includeParent);
         return extCollection;
       }
     },
