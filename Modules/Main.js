@@ -86,7 +86,7 @@ export const main = () => {
     because <code>allowUnknownHtmlTags.on</code> was just called.
     It is inserted @ after the header subtext
     </XStyle>`, document.querySelector("[data-starttext]"), insertPositions.AfterEnd )
-    .attr({ style: "color: orange" });
+    .attr({ style: {color: "orange"} });
 
   // now disallow again
   allowUnknownHtmlTags.off();
