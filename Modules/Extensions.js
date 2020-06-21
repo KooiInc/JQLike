@@ -1,4 +1,4 @@
-import { cleanupHtml} from "./DOM.js";
+import {cleanupHtml} from "./DOM.js";
 
 /**
  * Private: iterator used for most
@@ -40,15 +40,16 @@ const hex2RGBA = (hex, opacity = 100) => {
 };
 /** endregion */
 
-/* region handling */
-const { addHandler } = (() => {
+/* region handling helper */
+const addHandler = (() => {
   /**
    * Note:
    * all handlers use event delegation.
    * For every eventType there will be exactly one
-   * handler.
-   * The handler iterates over the handler functions
-   * created with the factory function [handlerFn].
+   * handler, added to the document.
+   * The handler iterates over the (wrapped) handler
+   * functions created with the factory
+   * function [handlerFn].
    */
   let handlers = {};
 
@@ -108,26 +109,14 @@ const { addHandler } = (() => {
     }
   };
 
-  return {
-    /**
-     * adds a handler to the handlers array
-     * if applicable, adds the event handler
-     * to document
-     * @param extCollection
-     * @param type
-     * @param selectorOrCb
-     * @param callback
-     * @param includeParent
-     */
-    addHandler: (extCollection, type, selectorOrCb, callback, includeParent) => {
-      if (!Object.keys(handlers).find(t => t === type)) {
-        document.addEventListener(type, metaHandler);
-      }
-      const fn = handlerFnFactory(extCollection, selectorOrCb, callback, includeParent);
-      handlers = handlers[type]
-        ? { ...handlers, [type]: [...handlers[type], fn] }
-        : { ...handlers, [type]: [fn] };
+  return (extCollection, type, selectorOrCb, callback, includeParent) => {
+    if (!Object.keys(handlers).find(t => t === type)) {
+      document.addEventListener(type, metaHandler);
     }
+    const fn = handlerFnFactory(extCollection, selectorOrCb, callback, includeParent);
+    handlers = handlers[type]
+      ? {...handlers, [type]: [...handlers[type], fn]}
+      : {...handlers, [type]: [fn]};
   };
 })();
 /* endregion */
