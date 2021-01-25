@@ -12,10 +12,10 @@ const closestSibling = (elem, selector) => elem.parentNode.querySelector(selecto
 
 // create DOM object from html string
 const htmlToVirtualElement = htmlString => {
-  const placeholder = document.createElement("div");
-  placeholder.innerHTML = htmlString;
-  return placeholder.children.length
-    ? cleanupHtml(placeholder.firstChild)
+  const placeholder = Object.assign(document.createElement("div"), { id:"placeholder", innerHTML: htmlString.trim() });
+
+  return placeholder.childNodes.length
+    ? cleanupHtml(placeholder)
     : undefined;
 };
 
@@ -32,14 +32,13 @@ const createElementFromHtmlString = htmlStr => {
   let nwElem = htmlToVirtualElement(htmlStr);
 
   if (!nwElem) {
-    const report = `${htmlStr.slice(0, htmlStr.indexOf(">") + 1)}...${
-      htmlStr.slice(htmlStr.lastIndexOf("<"))}`;
+    const report = `${htmlStr.slice(0, htmlStr.indexOf("<") + 1)}...${
+      htmlStr.slice(htmlStr.lastIndexOf(">"))}`;
     console.log(`DOM message: no valid element(s) in [${report}]`);
-    // create an empty element with data attribute
-    nwElem = document.createElement("div");
-    nwElem.dataset.invalidElement = `${report}`;
+    // onError create an empty element with data attribute
+    nwElem = Object.assign(document.createElement("div"), {"data-elementInvalid": `${report}`});
   }
-  return nwElem;
+  return nwElem.children[0];
 };
 
 export {

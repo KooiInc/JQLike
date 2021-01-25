@@ -3,9 +3,9 @@ import { createElementFromHtmlString } from "./DOM.js";
 let useLogging = false;
 const debugLog = { on: () => useLogging = true, off: () => useLogging = false, };
 const log = txt => {
+  if (!useLogging) { return; }
   if (!document.querySelector("#jql_logger")) {
     const logBlock = createElementFromHtmlString(`<pre id="jql_logger"></pre>`, document.body);
-
     Object.entries( {
          maxHeight: "200px",
          overflow: "auto",
@@ -17,6 +17,7 @@ const log = txt => {
          maxWidth: "inherit",
          border: "1px dotted #777",
       } ).forEach( ([key, value]) => logBlock.style[key] = value);
+    document.body.appendChild(logBlock);
   }
   document.querySelector("#jql_logger").textContent += `.${txt}\n`;
 };

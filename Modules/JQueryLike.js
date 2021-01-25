@@ -1,99 +1,114 @@
-import {log, logStatus} from "./Log.js";
+/*
+ centralized import
+ partly exported as [util]
+*/
+import {
+  debugLog,
+  log,
+  logStatus
+} from "./Log.js";
+
+import {
+  setTagPermission,
+  getRestricted,
+  allowUnknownHtmlTags,
+} from "./DOMCleanup.js";
+
 import {
   createElementFromHtmlString,
   element2DOM,
   insertPositions,
+  closestSibling,
 } from "./DOM.js";
 
-import { extensions, loop } from "./Extensions.js";
+/* local */
+import {
+  extensions,
+  loop,
+} from "./Extensions.js";
 
-// the prototype initializer
+/* the prototype initializer */
 const initializePrototype = (ctor, extensions) => {
-  Object.entries(Object.getOwnPropertyDescriptors(Element.prototype))
-    .filter( propDescriptr => propDescriptr.value instanceof Function)
-    .forEach( ([key, { value }]) =>
-      ctor.prototype[key] = function(...args) {
-        return loop(this, elem => value.apply(elem, args));
-    } );
-
-  Object.entries(Object.getOwnPropertyDescriptors(NodeList.prototype))
-    .filter( propDescriptr => propDescriptr.value instanceof Function)
-    .forEach( ([key]) => {
-        ctor.prototype[key] = function(lambda) {
-          this.collection[key](lambda);
-          return this;
-        };
-    } );
-
   Object.entries(extensions).forEach(([key, lambda]) => {
-    ctor.prototype[key] = function(...args) {
+    ctor.prototype[key] = function (...args) {
       return lambda.fn
         ? lambda.fn(this, ...args)
         : loop(this, el => lambda(el, ...args));
     };
   });
-
   ctor.prototype.isSet = true;
 };
 
 // -------------------------------------------------------------------- //
-const $ = (() => {
-  function ExtendedNodeList(selectorOrHtml, root = document.body, position = insertPositions.BeforeEnd ) {
+const {$, util} = (() => {
+  function ExtendedNodeList(
+    inputObject,
+    root = document.body,
+    position = insertPositions.BeforeEnd) {
+
     if (ExtendedNodeList.prototype.isSet === undefined) {
       initializePrototype(ExtendedNodeList, extensions);
     }
 
     this.collection = [];
-    const cleanupCollection = () => this.collection = this.collection.reduce( (acc, elem) =>
-      !elem.dataset.elementInvalid && [...acc, element2DOM(elem, root, position)] || acc, []
+    this.cssSelector = inputObject && inputObject.trim && inputObject || null;
+    const cleanupAndAppendCollection = () => this.collection = this.collection.reduce((acc, elem) =>
+      !(elem || {dataset: {}}).dataset["elementInvalid"] ? [...acc, element2DOM(elem, root, position)] : acc, []
     );
 
+    const selectorRoot = root !== document.body &&
+      (inputObject.constructor === String &&
+        inputObject.toLowerCase() !== "body") ? root : document;
+
     try {
-      const isArray = Array.isArray(selectorOrHtml);
-      if (selectorOrHtml) {
-        if (selectorOrHtml instanceof HTMLElement) {
-          this.collection = [selectorOrHtml];
-        } else if ( isArray ||
-            `${selectorOrHtml}`.trim().startsWith("<") ) {
+      const isArray = Array.isArray(inputObject);
+      this.collection = [];
 
-          if (logStatus()) {
-            log(`trying to create ... [${selectorOrHtml}]`);
-          }
+      if (inputObject instanceof HTMLElement) {
+        this.collection = [inputObject];
+      } else if (inputObject instanceof NodeList) {
+        this.collection = [...inputObject];
+      } else if (inputObject instanceof ExtendedNodeList) {
+        this.collection = inputObject.collection;
+      } else if (isArray || `${inputObject}`.trim().startsWith("<") && `${inputObject}`.trim().endsWith(">")) {
+        log(`trying to create ... [${inputObject}]`);
 
-          if (isArray) {
-            selectorOrHtml.forEach( html =>
-               this.collection.push(createElementFromHtmlString(html, root)) );
-
-          } else {
-            this.collection = [createElementFromHtmlString(selectorOrHtml, root)];
-          }
-          // remove erroneous elems
-          cleanupCollection();
-
-          if (logStatus()) {
-            log(`created element: *clean: [${this.collection[0].outerHTML}]`);
-          }
-        } else if (selectorOrHtml) {
-          this.collection = root.querySelectorAll(selectorOrHtml);
+        if (isArray) {
+          inputObject.forEach(htmlFragment => {
+            this.collection.push(createElementFromHtmlString(htmlFragment));
+          });
         } else {
-          log(`No css selector, assign empty collection`);
+          const nwElem = createElementFromHtmlString(inputObject);
+          this.collection = [nwElem];
         }
-
-        return this;
+        // remove erroneous elems and append to DOM
+        cleanupAndAppendCollection();
+        log(`created element: *clean: [${this.collection[0].outerHTML}]`);
+      } else if (inputObject && inputObject.trim) {
+        this.collection = [...selectorRoot.querySelectorAll(inputObject)];
       }
+      return this;
     } catch (err) {
       const msg = `Caught jql selector or html error:\n${err.stack ? err.stack : err.message}`;
-      if (logStatus()) {
-        log(msg);
-      } else {
-        console.log(msg);
-      }
+      log(msg);
+    //^ only if logStatus = on, so
+      console.log(msg);
     }
   }
 
   return {
     $: (...args) => new ExtendedNodeList(...args),
+    util: {
+      debugLog,
+      log,
+      logStatus,
+      setTagPermission,
+      allowUnknownHtmlTags,
+      insertPositions,
+      getRestricted,
+      closestSibling
+    }
   };
-})().$;
+})();
 
-export default $;
+export {$, util};

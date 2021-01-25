@@ -45,7 +45,8 @@ export const main = () => {
   const imgChange = evt => {
     const img = closestSibling(evt.target, "img");
     img.src = "";
-    img.src = "https://picsum.photos/400/200";
+    img.src = `https://picsum.photos/400/200?${Math.random()*10}`;
+    console.log(`why is this spontanuously changing? ${new Date().toLocaleTimeString()} ${img.src}`);
   };
 
   $(`<div>
