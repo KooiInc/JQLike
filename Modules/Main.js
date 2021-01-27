@@ -1,16 +1,14 @@
-import { debugLog, log } from "./Log.js";
-import $ from "./JQueryLike.js";
-import { setTagPermission, getRestricted, allowUnknownHtmlTags, } from "./DOMCleanup.js";
-import { insertPositions, closestSibling } from "./DOM.js" ;
+import { $, util } from "./JQueryLike.js";
+const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling} = util;
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
-  debugLog.off();
+  util.debugLog.off();
   console.clear();
 
   $( [
-      `<h2>Testing a JQ-alike html helper library</h2>`,
-      `<p data-starttext>
+    `<h2>Testing a JQ-alike html helper library</h2>`,
+    `<p data-starttext>
           Some jQuery-stuff is too good to loose. So here's a jQuery lite attempt.
           <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
         </p>`] );
@@ -29,14 +27,14 @@ export const main = () => {
 
   /** add some elements to the body */
   $(`<div>Hi, I am test. Check the color button</div>`)
-    .addClass("testxyz")
-    .attr({ data: { test: "test!", colorchange: "blue" } });
+      .addClass("testxyz")
+      .attr({ data: { test: "test!", colorchange: "blue" } });
 
-  $(`<div class="testxyz">Me too, but will not participate in colorization`)
+  $(`<div class="testxyz">Me too, but will not participate in colorization</div>`)
 
-  $(`<div>Also one for the color button!`)
-    .addClass("testxyz")
-    .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
+  $(`<div>Also one for the color button!</div>`)
+      .addClass("testxyz")
+      .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
   /** button */
   $(`<div><button>toggleStyleFragments for *[data-colorchange]</button></div>`)
@@ -53,8 +51,8 @@ export const main = () => {
        <img class="randomImg" src="https://picsum.photos/400/200"></img>
        <div class="caption">Just click if you don't like the image</div>
      </div>`)
-    .css({display: "inline-block", margin: "0.5rem 0", cursor: "pointer", clear: "both"})
-    .on("click", ".caption, img", imgChange);
+      .css({display: "inline-block", margin: "0.5rem 0", cursor: "pointer", clear: "both"})
+      .on("click", ".caption, img", imgChange);
 
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
@@ -78,16 +76,16 @@ export const main = () => {
         cursor: "pointer"
       })
       .on("click", "span", evt => console.log(`Hi, you clicked a <${
-        evt.target.nodeName}>, and the text is "${
-        evt.target.textContent}"`));
+          evt.target.nodeName}>, and the text is "${
+          evt.target.textContent}"`));
 
- // allow this temporarily
+  // allow this temporarily
   allowUnknownHtmlTags.on();
   $( `<XStyle>&lt;XStyle> is not a valid tag but it will render, 
     because <code>allowUnknownHtmlTags.on</code> was just called.
     It is inserted @ after the header subtext
     </XStyle>`, document.querySelector("[data-starttext]"), insertPositions.AfterEnd )
-    .attr({ style: {color: "orange"} });
+      .attr({ style: {color: "orange"} });
 
   // now disallow again
   allowUnknownHtmlTags.off();
@@ -95,8 +93,8 @@ export const main = () => {
   $( [`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
     `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
         was just called. This element is inserted afther the previous &lt;xstyle&gt; element</div>`,
-    ], document.querySelector("xstyle"), insertPositions.AfterEnd)
-  .css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
+  ], document.querySelector("xstyle"), insertPositions.AfterEnd)
+      .css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
 
   /** this will throw but the error is caught (see console) */
   $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
@@ -108,7 +106,7 @@ export const main = () => {
   $(`<div id="nopre" style="margin-top:1rem">
     notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code>, so<br>
     no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
-    .html(`<p>
+      .html(`<p>
       <i>TEST append html</i> (<code>html([...], true)</code>)
       (dependancy chain originates from JQueryLike)</p>`, true);
 
@@ -118,13 +116,13 @@ export const main = () => {
   /** reallow <pre> */
   setTagPermission("pre", true);
   $(
-    `<div data-colorchange="#cc3300">
+      `<div data-colorchange="#cc3300">
       notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
       <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
      </div>`
   )
-  .on("click", "*", () => alert("hi there! Works?"), true)
-  .css({cursor: "pointer"});
+      .on("click", () => alert("hi there! Works?"), true)
+      .css({cursor: "pointer"});
 
   $(`<div>
       <code>
@@ -133,17 +131,17 @@ export const main = () => {
     </div>`);
 
   $(`<div/>`)
-    .css({cursor: "pointer"})
-    .html(`test html() extension function for a newly created element from html string`)
-    .on("click", (evt, self) => self.toggleStyleFragments({color: "red"}));
+      .css({cursor: "pointer"})
+      .html(`test html() extension function for a newly created element from html string`)
+      .on( "click", (evt, elem) => elem.toggleStyleFragments({color: "red"} ) );
 
 
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
-    .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
-    .single(1)
-    .html(`
+      .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
+      .single(1)
+      .html(`
       <br>&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
       text <i>and</i> all text should be green)`
-      , true)
-    .css({color: "green"});
+          , true)
+      .css({color: "green"});
 };
