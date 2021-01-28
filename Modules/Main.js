@@ -62,9 +62,8 @@ export const main = () => {
         <span>Hi, I am an added paragraph from html string.</span>
         <!--there should not be a script tag after this -->
         <script>alert('HI?')></script>
-        <span style="display:block" data-colorchange>Html is cleaned: check log
-          <br><span>(Nested) A click handler is defined for all &lt;span&gt;
-           within this paragraph (see console)</span>
+        <span style="display:block" data-colorchange>Html is cleaned: check log</span>
+        <span style="display:block">(Nested) A click handler is defined for all &lt;span&gt; within this paragraph</span>
         </span>
       </p>`)
       .css({
@@ -76,9 +75,12 @@ export const main = () => {
         border: "1px solid #777",
         cursor: "pointer"
       })
-      .on("click", "span", evt => console.log(`Hi, you clicked a <${
-          evt.target.nodeName}>, and the text is "${
-          evt.target.textContent}"`));
+      .on("click", "span", evt => {
+          const target = evt.target;
+          const prevTxt = target.innerHTML;
+          target.innerHTML += `<b style="color:green"> Hi, you clicked!</b>`;
+          setTimeout(() => target.innerHTML = prevTxt, 2000);
+      });
 
   // allow this temporarily
   allowUnknownHtmlTags.on();
