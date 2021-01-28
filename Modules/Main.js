@@ -48,12 +48,13 @@ export const main = () => {
   };
 
   $(`<div>
-       <img class="randomImg" src="https://picsum.photos/400/200"></img>
+       <img class="randomImg" src="https://picsum.photos/400/200" alt="a random image"/>
        <div class="caption">Just click if you don't like the image</div>
      </div>`)
       .css({display: "inline-block", margin: "0.5rem 0", cursor: "pointer", clear: "both"})
       .on("click", ".caption, img", imgChange);
 
+  // noinspection BadExpressionStatementJS,HtmlUnknownAttribute
   /** '<script>' and 'onclick' will not be rendered after the following*/
   $(`<p data="notallowed!" 
         onclick="alert('hi, this will be removed!')"
@@ -90,14 +91,16 @@ export const main = () => {
   // now disallow again
   allowUnknownHtmlTags.off();
   // todo: array of values
+  // noinspection CssInvalidHtmlTagReference
   $( [`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
     `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
         was just called. This element is inserted afther the previous &lt;xstyle&gt; element</div>`,
   ], document.querySelector("xstyle"), insertPositions.AfterEnd)
       .css({color: "orange", fontWeight: "bold", marginTop: "0.7rem"});
 
+  // noinspection CssInvalidHtmlTagReference
   /** this will throw but the error is caught (see console) */
-  $(`XStyle&lt;XStyleWill throw&lt;/XStyle>/XStyle>`);
+  $("XStyle\\&lt\\;XStyleWill throw\\&lt\\;\\/XStyle>\\/XStyle>");
 
   /** disallow <pre> for added html */
   setTagPermission("pre", false);
