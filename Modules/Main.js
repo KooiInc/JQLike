@@ -63,7 +63,9 @@ export const main = () => {
         <!--there should not be a script tag after this -->
         <script>alert('HI?')></script>
         <span style="display:block" data-colorchange>Html is cleaned: check log</span>
-        <span style="display:block">(Nested) A click handler is defined for all &lt;span&gt; within this paragraph</span>
+        <label style="display:block">
+            <span>(span nested within label) A click handler is defined for all &lt;span&gt; within this paragraph</span>
+        </label>
         </span>
       </p>`)
       .css({
@@ -77,6 +79,7 @@ export const main = () => {
       })
       .on("click", "span", evt => {
           const target = evt.target;
+          target.querySelector("b") && target.removeChild(target.querySelector("b"));
           const prevTxt = target.innerHTML;
           target.innerHTML += `<b style="color:green"> Hi, you clicked!</b>`;
           setTimeout(() => target.innerHTML = prevTxt, 2000);
@@ -122,12 +125,13 @@ export const main = () => {
   setTagPermission("pre", true);
   $(
       `<div data-colorchange="#cc3300">
-      notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
-      <pre style="margin-top:0">This &lt;pre&gt; is allowed again</pre>
-     </div>`
-  )
-      .on("click", () => alert("hi there! Works?"), true)
-      .css({cursor: "pointer"});
+        (this div contains a handler)<br>
+        notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
+        <pre style="margin-top:0.5rem">This &lt;pre&gt; is allowed again</pre>
+        
+     </div>` )
+  .on("click", () => alert("hi there! Works?"), true)
+  .css({cursor: "pointer"});
 
   $(`<div>
       <code>
@@ -136,17 +140,15 @@ export const main = () => {
     </div>`);
 
   $(`<div/>`)
-      .css({cursor: "pointer"})
-      .html(`test html() extension function for a newly created element from html string`)
-      .on( "click", (evt, elem) => elem.toggleStyleFragments({color: "red"} ) );
+    .css({cursor: "pointer"})
+    .html(`test html() extension function for a newly created element from html string (click me)`)
+    .on( "click", (evt, elem) => elem.toggleStyleFragments({color: "red"} ) );
 
 
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
-      .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
-      .single(1)
-      .html(`
-      <br>&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
-      text <i>and</i> all text should be green)`
-          , true)
-      .css({color: "green"});
+    .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
+    .single(1)
+    .html(`<br>&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
+            text <i>and</i> all text should be green)`, true)
+    .css({color: "green"});
 };
