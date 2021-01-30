@@ -1,4 +1,4 @@
-import { $, util } from "./JQueryLike.js";
+import { $, util } from "https://cdn.nicon.nl/Modules/JQueryLike.js";
 const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling} = util;
 
 export const main = () => {
@@ -44,7 +44,6 @@ export const main = () => {
     const img = closestSibling(evt.target, "img");
     img.src = "";
     img.src = `https://picsum.photos/400/200?${Math.random()*10}`;
-    console.log(`why is this spontanuously changing? ${new Date().toLocaleTimeString()} ${img.src}`);
   };
 
   $(`<div>
