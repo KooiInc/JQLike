@@ -1,9 +1,9 @@
-import { $, util } from "https://cdn.nicon.nl/Modules/JQueryLike.js";
-const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling} = util;
+import { $, util } from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities/JQueryLike.min.js";
+const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling, debugLog } = util;
 
 export const main = () => {
   // to follow tag creation etc. use debugLog.on
-  util.debugLog.off();
+  debugLog.off();
   console.clear();
 
   $( [
