@@ -1,4 +1,4 @@
-import { $, util } from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities/JQueryLike.min.js";
+import { $, util } from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities/JQueryLike.js";
 const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling, debugLog } = util;
 
 export const main = () => {
@@ -10,7 +10,7 @@ export const main = () => {
     `<h2>Testing a JQ-alike html helper library</h2>`,
     `<p data-starttext>
           Some jQuery-stuff is too good to loose. So here's a jQuery lite attempt.
-          <a href="https://github.com/KooiInc/JQLike/" target="_blank">Code on githbub</a>
+          <a href="https://github.com/KooiInc/DOM-Utilities" target="_blank">Code on githbub</a>
         </p>`] );
 
   const uselessTestHandler = evt => {
