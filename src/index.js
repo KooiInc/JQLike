@@ -1,2 +1,2 @@
-import { main } from "../Modules/Main.js";
-main();
+import { MAIN } from "../Modules/Main.js");
+MAIN();
