@@ -1,19 +1,20 @@
-export const MAIN = () => importStuff("https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.01/JQueryLike.js");
+import {importAsync} from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.02/SmallHelpers.js";
 
-async function importStuff(link) {
-  const version = link.split("@")[1].split("/")[0] || "master";
-  import(link).then(r => RUN(r.$, r.util, version));
-}
+const importJQModuleURL = "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.02/JQueryLike.js";
+const version = importJQModuleURL.split("@")[1].split("/")[0] || "master";
+
+export const MAIN = () => importAsync(importJQModuleURL, module => RUN(module, version));
 
 // the actual code here
-function RUN($, util, version) {
+function RUN(module, version) {
+  const {$, util} = module;
+  
   // to follow tag creation etc. use debugLog.on
   const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling, debugLog } = util;
   debugLog.off();
+  
   console.clear();
-  const importedVersion = import.meta.url;
-  setTimeout(() => console.log(importedVersion), 4000);
-
+  
   $([
     `<h2>Testing a JQ-alike html helper library (version: <span style="color:red">${version}</span>)</h2>`,
     `<p data-starttext>
