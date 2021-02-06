@@ -15,7 +15,7 @@ function RUN($, util, version) {
   setTimeout(() => console.log(importedVersion), 4000);
 
   $([
-    `<h2>Testing a JQ-alike html helper library (version: ${version})</h2>`,
+    `<h2>Testing a JQ-alike html helper library (version: <span style="color:red">${version}</span>)</h2>`,
     `<p data-starttext>
       Some jQuery-stuff is too good to loose. So here's a jQuery lite attempt.
       <a href="https://github.com/KooiInc/DOM-Utilities" target="_blank">Code on githbub</a>
