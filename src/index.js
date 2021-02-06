@@ -1,2 +1,1 @@
-import { MAIN } from "../Modules/Main.js");
-MAIN();
+import("../Modules/Main.js").then(r => r.MAIN());
