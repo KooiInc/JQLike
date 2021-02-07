@@ -1,20 +1,22 @@
-import {importAsync} from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.02/SmallHelpers.js";
+import {importAsync} from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.0/SmallHelpers.js";
 
-const importJQModuleURL = "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.02/JQueryLike.js";
-const version = importJQModuleURL.split("@")[1].split("/")[0] || "master";
+const importJQModuleURL = "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.0/JQueryLike.js";
+const version = /@/.test(importJQModuleURL) && importJQModuleURL.split("@")[1].split("/")[0] || "master";
 
 export const MAIN = () => importAsync(importJQModuleURL, module => RUN(module, version));
 
-// the actual code here
+/** the actual code here */
 function RUN(module, version) {
   const {$, util} = module;
   
-  // to follow tag creation etc. use debugLog.on
   const { setTagPermission, getRestricted, allowUnknownHtmlTags, insertPositions, closestSibling, debugLog } = util;
+
+  /** to follow tag creation etc. use debugLog.on */
   debugLog.off();
   
   console.clear();
   
+  /** create the html for this page */
   $([
     `<h2>Testing a JQ-alike html helper library (version: <span style="color:red">${version}</span>)</h2>`,
     `<p data-starttext>
@@ -22,10 +24,9 @@ function RUN(module, version) {
       <a href="https://github.com/KooiInc/DOM-Utilities" target="_blank">Code on githbub</a>
     </p>`]);
 
+  /** button handler */
   const uselessTestHandler = evt => {
-    const origin = evt.target;
-
-    if (origin.nodeName === "BUTTON") {
+    if (evt.target.nodeName === "BUTTON") {
       $("[data-colorchange]").toggleStyleFragments({
         color: el => el.dataset.colorchange || "#6666ff",
         backgroundColor: "rgba(255,255,0,0.25)",
@@ -45,16 +46,18 @@ function RUN(module, version) {
     .addClass("testxyz")
     .attr({ data: { test: "test!", somethingElse: "not important", colorchange: "magenta" } });
 
-  /** button */
+  /** create a button */
   $(`<div><button>toggleStyleFragments for *[data-colorchange]</button></div>`)
     .on("click", "button", uselessTestHandler, true);
 
+  /** create a handler for the image */  
   const imgChange = evt => {
     const img = closestSibling(evt.target, "img");
     img.src = "";
     img.src = `https://picsum.photos/400/200?${Math.random() * 10}`;
   };
 
+  /** create a (clickable) image */
   $(`<div>
    <img class="randomImg" src="https://picsum.photos/400/200" alt="a random image"/>
    <div class="caption">Just click if you don't like the image</div>
@@ -62,8 +65,10 @@ function RUN(module, version) {
     .css({ display: "inline-block", margin: "0.5rem 0", cursor: "pointer", clear: "both" })
     .on("click", ".caption, img", imgChange);
 
-  // noinspection BadExpressionStatementJS,HtmlUnknownAttribute
-  /** '<script>' and 'onclick' will not be rendered after the following*/
+  /** 
+   * '<script>' and 'onclick' will not be rendered after the following
+   *  for all <span> whithin the element a click handler
+   */
   $(`<p data="notallowed!" 
     onclick="alert('hi, this will be removed!')"
     id="cleanupTesting">
@@ -93,7 +98,7 @@ function RUN(module, version) {
       setTimeout(() => target.innerHTML = prevTxt, 2000);
     });
 
-  // allow this temporarily
+  /* allow unknown tags this temporarily */
   allowUnknownHtmlTags.on();
   $(`<XStyle>&lt;XStyle> is not a valid tag but it will render, 
 because <code>allowUnknownHtmlTags.on</code> was just called.
@@ -101,33 +106,38 @@ It is inserted @ after the header subtext
 </XStyle>`, document.querySelector("[data-starttext]"), insertPositions.AfterEnd)
     .attr({ style: { color: "orange" } });
 
-  // now disallow again
+  /** now disallow again  */
   allowUnknownHtmlTags.off();
-  // todo: array of values
-  // noinspection CssInvalidHtmlTagReference
-  $([`<SomethingUnknown>&lt;SomethingUnknow> is not a valid tag and it will not render</SomethingUnknown>`,
-    `<div>&lt;SomethingUnknow> rendered as empty div[data-jql-invalid], because <code>allowUnknownHtmlTags.off</code>
-    was just called. This element is inserted afther the previous &lt;xstyle&gt; element</div>`,
-  ], document.querySelector("xstyle"), insertPositions.AfterEnd)
+  
+  /** <SomethingUnknown> will not render. A html comment is shown within the html tree */
+  $([`<SomethingUnknown>NO SIR</SomethingUnknown>`,
+    `<div>&lt;SomethingUnknow> not rendered because <code>allowUnknownHtmlTags.off</code> was called: 
+    see comment in html. This element is inserted afther the previous &lt;xstyle&gt; element</div>` ], 
+      document.querySelector("xstyle"))
     .css({ color: "orange", fontWeight: "bold", marginTop: "0.7rem" });
 
-  // noinspection CssInvalidHtmlTagReference
   /** this will throw but the error is caught (see console) */
   $("XStyle\\&lt\\;XStyleWill throw\\&lt\\;\\/XStyle>\\/XStyle>");
 
   /** disallow <pre> for added html */
   setTagPermission("pre", false);
 
-  /** <pre> will not be rendered */
+  /** nested <pre> will just not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
-notAllowedTags now: <code>${getRestricted("pre").filter(v => v !== "isAllowed").join(", ")}</code><br>
-so no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
+      notAllowedTags now: <code>${getRestricted("pre").filter(v => v !== "isAllowed").join(", ")}</code><br>
+      so no <code>&lt;pre></code> here
+      <pre>will not be rendered</pre>
+    </div>`)
     .html(`<p>
-  <i>TEST append html</i> (<code>html([...], true)</code>)
-  (dependancy chain originates from JQueryLike)</p>`, true);
+      <i>TEST append html</i> (<code>html([...], true)</code>)
+      (dependancy chain originates from JQueryLike)</p>`, true)
+    .css( { 
+      border: "1px solid #999",
+      padding: "5px",
+      marginBottom: "0.8rem", } );
 
-  /** throws (no element after cleanup), but caught */
-  $("<pre>This will not render and throw (silently)</pre>").addClass("booh");
+  /** shows comment in html or not rendered element (not an allowed tag)*/
+  $("<pre>This is not rendered</pre>").addClass("booh");
 
   /** reallow <pre> */
   setTagPermission("pre", true);
@@ -142,7 +152,7 @@ so no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
       cursor: "pointer",
       border: "1px solid #999",
       padding: "5px",
-      marginBottom: "0.8rem"  });
+      marginBottom: "0.8rem", });
 
   $(`<div>
       <b>statement =></b> <code style="white-space:pre-wrap">
@@ -165,3 +175,8 @@ so no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
         text <i>and</i> all text should be green)`, true)
     .css({ color: "green" });
 }
+
+/** uncomment for testing with local cdn (and uncomment other import statements above)
+ *  import {$, util} from "http://cdn.nicon.nl/modules/JQueryLike.js";
+ *  RUN({$, util}, "DEBUG");
+ */ 
