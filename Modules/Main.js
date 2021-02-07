@@ -153,7 +153,7 @@ no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
         </code>
      </div>`);
 
-  const x = $(`<div id="tssk"/>`)
+  $(`<div id="tssk"/>`)
     .on("click", "b:nth-of-type(2)", (evt, elem) => elem.toggleStyleFragments({ color: "red" }))
     .html(`<b>result =&gt;</b> test <code>.html()</code> / chaining (<b>click me</b>)`)
     .find$("b:nth-of-type(2)").css({ cursor: "pointer" });
