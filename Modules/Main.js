@@ -158,8 +158,6 @@ no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
     .html(`<b>result =&gt;</b> test <code>.html()</code> / chaining (<b>click me</b>)`)
     .find$("b:nth-of-type(2)").css({ cursor: "pointer" });
 
-  console.log(x.find$("b:first-child"));
-
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
     .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
     .single(1)
