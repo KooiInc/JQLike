@@ -13,7 +13,7 @@ body {
 pre {
   max-width: inherit;
 }
-code {
+code, span.code {
   font-family: "Courier New", Courier, monospace;
   color: green;
 }

@@ -133,30 +133,37 @@ no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
   setTagPermission("pre", true);
   $(
     `<div data-colorchange="#cc3300">
-    (this div contains a handler)<br>
-    notAllowedTags reset: <code>${getRestricted("pre").join(", ")}</code>, so
-    <pre style="margin-top:0.5rem">This &lt;pre&gt; is allowed again</pre>
-    
- </div>` )
-    .on("click", () => alert("hi there! Works?"), true)
-    .css({ cursor: "pointer" });
+      <h4 style="margin-top: 0">(this div contains a handler)</h4>
+      notAllowedTags reset: <span class="code">${getRestricted("pre").join(", ")}</span>, so
+      <pre style="margin-top:0.5rem;margin-bottom:0">This &lt;pre&gt; is allowed again</pre>
+    </div>` )
+    .on("click", () => alert("hi there! Handled?"))
+    .css({ 
+      cursor: "pointer",
+      border: "1px solid #999",
+      padding: "5px",
+      marginBottom: "0.8rem"  });
 
   $(`<div>
-  <code>
-    $("&lt;div/&gt;").html("test html() extension function for a newly created element from html string")
-  </code> result =&gt;
-</div>`);
+      <b>statement =></b> <code style="white-space:pre-wrap">
+  $("&lt;div/>")
+    .on("click", "b:nth-of-type(2)", (evt, elem) => elem.toggleStyleFragments({ color: "red" })
+    .html("&lt;b>result =&gt;&lt;/b> test &lt;code>html()&lt;/code> / chaining (&lt;b>click me&lt;/b>)")
+    .find$("b:nth-of-type(2)").css({ cursor: "pointer" })
+        </code>
+     </div>`);
 
-  $(`<div/>`)
-    .css({ cursor: "pointer" })
-    .html(`test html() extension function for a newly created element from html string (click me)`)
-    .on("click", (evt, elem) => elem.toggleStyleFragments({ color: "red" }));
+  const x = $(`<div id="tssk"/>`)
+    .on("click", "b:nth-of-type(2)", (evt, elem) => elem.toggleStyleFragments({ color: "red" }))
+    .html(`<b>result =&gt;</b> test <code>.html()</code> / chaining (<b>click me</b>)`)
+    .find$("b:nth-of-type(2)").css({ cursor: "pointer" });
 
+  console.log(x.find$("b:first-child"));
 
   $([`<p data-p></p>`, `<p data-p class="boeia"></p>`])
     .html("Test multiple elems (<code>$([...])</code>) <i>and</i> <code>html([...])</code> in one go", true)
     .single(1)
-    .html(`<br>&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
+    .html(`&nbsp;&nbsp;=> Test single([index]) extension for newly created elements (second should show this 
         text <i>and</i> all text should be green)`, true)
     .css({ color: "green" });
 }
