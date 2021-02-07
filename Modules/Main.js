@@ -120,7 +120,7 @@ It is inserted @ after the header subtext
 
   /** <pre> will not be rendered */
   $(`<div id="nopre" style="margin-top:1rem">
-notAllowedTags now: <code>${getRestricted("pre").join(", ")}</code><br>
+notAllowedTags now: <code>${getRestricted("pre").filter(v => v !== "isAllowed").join(", ")}</code><br>
 so no <code>&lt;pre></code> here<pre>will not be rendered</pre></div>`)
     .html(`<p>
   <i>TEST append html</i> (<code>html([...], true)</code>)
