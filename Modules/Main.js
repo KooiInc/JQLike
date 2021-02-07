@@ -1,6 +1,6 @@
-import {importAsync} from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.0/SmallHelpers.js";
+import {importAsync} from "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.2/SmallHelpers.js";
 
-const importJQModuleURL = "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.0/JQueryLike.js";
+const importJQModuleURL = "https://cdn.jsdelivr.net/gh/KooiInc/DOM-Utilities@v1.1.2/JQueryLike.js";
 const version = /@/.test(importJQModuleURL) && importJQModuleURL.split("@")[1].split("/")[0] || "master";
 
 export const MAIN = () => importAsync(importJQModuleURL, module => RUN(module, version));
